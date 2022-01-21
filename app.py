@@ -2,7 +2,7 @@ from flask import Flask, request
 from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)  # объявим экземпляр фласка
-cors = CORS(app) # включаем заголовки для кроссбраузерного ответа
+cors = CORS(app)  # включаем заголовки для кроссбраузерного ответа
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 
