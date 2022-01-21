@@ -1,5 +1,6 @@
 from flask import Flask, request
 from flask_cors import CORS, cross_origin
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)  # объявим экземпляр фласка
 cors = CORS(app)  # включаем заголовки для кроссбраузерного ответа
