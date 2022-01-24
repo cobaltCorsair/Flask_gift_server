@@ -17,6 +17,7 @@ Base = declarative_base()
 class Username(Base):
     __tablename__ = 'username'
     id = Column(Integer, primary_key=True)
+    forum_id = Column(Integer, nullable=False)
     name = Column(String(250), nullable=False)
 
 
