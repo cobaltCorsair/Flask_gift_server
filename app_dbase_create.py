@@ -1,5 +1,4 @@
 # для настройки баз данных
-from bokeh.core.property.datetime import Datetime
 from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
 # для определения таблицы и модели
 from sqlalchemy.ext.declarative import declarative_base
@@ -32,12 +31,14 @@ class Presents(Base):
 class UserPresents(Base):
     __tablename__ = 'user_presents'
     id = Column(Integer, primary_key=True)
-    id_user_addressee = Column(Integer, ForeignKey=Username.id)
-    id_user_addressee = relationship(Username, backref=id)
-    id_user_sender = relationship(Username, backref=id)
-    id_present = relationship(Presents, backref=id)
+    id_user_addressee = Column(Integer, ForeignKey('username.id'))
+    id_user_sender = Column(Integer, ForeignKey('username.id'))
+    id_present = Column(Integer, ForeignKey('presents.id'))
+    name_present = Column(String, ForeignKey('presents.name'))
     comment = Column(String(500))
-    date = Column(Datetime(), default=datetime.utcnow)
+    date = Column(DateTime, default=datetime.utcnow)
+    user = relationship("Username", backref="presents")
+
 
 # создает экземпляр create_engine в конце файла
 engine = create_engine('sqlite:///user_presents.db')

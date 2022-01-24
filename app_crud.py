@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 # импортируем классы Book и Base из файла database_setup.py
-from app_dbase import Base, Username, Presents, UserPresents
+from app_dbase_create import Base, Username, Presents, UserPresents
 
 engine = create_engine('sqlite:///user_presents.db')
 # Свяжем engine с метаданными класса Base,
