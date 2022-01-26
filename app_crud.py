@@ -2,9 +2,9 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import IntegrityError
 # импортируем классы Book и Base из файла database_setup.py
-from models import Base, Username, Presents, UserPresents
+from models import Username, Presents, UserPresents
 
-engine = create_engine('postgresql:///user_presents.db')
+engine = create_engine('sqlite:///user_presents.db')
 # Свяжем engine с метаданными класса Base,
 # чтобы декларативы могли получить доступ через экземпляр DBSession
 Base.metadata.bind = engine
