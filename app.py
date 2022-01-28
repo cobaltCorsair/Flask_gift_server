@@ -12,10 +12,12 @@ from app_crud import add_new_user
 @app.route('/getandpost', methods=["POST"])
 @cross_origin()
 def get_post_javascript_data():
+    # добавляем метод записи в бд
     data = request.data
-    if data is not '':
-        print(data)
-        add_new_user('Test', '3')
+    if request.method == 'POST':
+        name = request.json['Name']
+        id = request.json['id']
+        add_new_user(name, id)
     return 'Какой-то ответ серверу'
 
 

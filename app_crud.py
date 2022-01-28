@@ -23,4 +23,4 @@ def add_new_user(person_name, id):
         pass
 
 
-print(db.session.query(Username).all())
+# print(db.session.query(Username).all())
