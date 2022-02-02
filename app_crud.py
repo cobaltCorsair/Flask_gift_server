@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from models import Username, Presents, UserPresents, db
 from sqlalchemy.exc import IntegrityError
 
@@ -48,6 +50,23 @@ class UpdateTables:
         :return:
         """
         present = Presents(name=present_name, title=present_title, image=image_url)
+        db.session.add(present)
+        db.session.commit()
+        print('Добавлено в бд')
+
+    @staticmethod
+    def make_present(addressee, sender, id_present, present_name, comment):
+        """
+        Функция для администратора форума, добавляющая подарки в бд
+        :param comment:
+        :param id_present:
+        :param addressee: получатель
+        :param sender: отправитель
+        :param present_name: имя подарка
+        :return:
+        """
+        present = UserPresents(id_user_addressee=addressee, id_user_sender=sender, id_present=id_present,
+                               name_present=present_name, comment=comment, date=datetime.now())
         db.session.add(present)
         db.session.commit()
         print('Добавлено в бд')

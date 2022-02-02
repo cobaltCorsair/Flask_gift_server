@@ -35,3 +35,7 @@ class UserPresents(db.Model):
     name_present = Column(db.String(120), ForeignKey('presents.name'))
     comment = Column(db.String(500))
     date = Column(db.DateTime(), default=datetime.utcnow)
+
+    user = db.relationship('Username',
+                           backref=db.backref('presents', cascade="all, delete-orphan"),
+                           lazy='joined')

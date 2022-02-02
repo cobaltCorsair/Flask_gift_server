@@ -18,3 +18,11 @@ $.ajax({
     contentType: "application/json",
     data: JSON.stringify({'id': 1}),
 });
+
+$.ajax({
+    url: "http://127.0.0.1:5000/makepresent",
+    type: "POST",
+    contentType: "application/json",
+    data: JSON.stringify({'addressee': 3, 'sender': 4,
+        'id_present': 2, 'present_name': 'Подарок1', 'comment': 'тут какое-то описание'}),
+});
