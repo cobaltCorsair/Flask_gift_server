@@ -36,6 +36,15 @@ class UserPresents(db.Model):
     comment = Column(db.String(500))
     date = Column(db.DateTime(), default=datetime.utcnow)
 
-    user = db.relationship('Username',
-                           backref=db.backref('presents', cascade="all, delete-orphan"),
+    user_send = db.relationship('Username', foreign_keys=[id_user_sender],
+                           backref=db.backref('user_send', cascade="all, delete-orphan"),
+                           lazy='joined')
+    user_addr = db.relationship('Username', foreign_keys=[id_user_addressee],
+                           backref=db.backref('user_addr', cascade="all, delete-orphan"),
+                           lazy='joined')
+    id_pres = db.relationship('Presents', foreign_keys=[id_present],
+                           backref=db.backref('id_pres', cascade="all, delete-orphan"),
+                           lazy='joined')
+    name_pres = db.relationship('Presents', foreign_keys=[name_present],
+                           backref=db.backref('name_pres', cascade="all, delete-orphan"),
                            lazy='joined')
