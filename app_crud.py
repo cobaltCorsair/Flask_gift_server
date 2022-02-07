@@ -23,12 +23,9 @@ class UpdateTables:
             #  если нет, то записываем
             if not user:
                 user = Username(name=person_name, forum_id=user_id)
-                # Чтобы сохранить наш объект user, мы добавляем его в сессию:
+                # чтобы сохранить наш объект user, мы добавляем его в сессию:
                 db.session.add(user)
-                # Чтобы сохранить изменения в нашу базу данных и зафиксировать
-                # транзакцию, используем commit(). Любое изменение,
-                # внесенное для объектов в сессии, не будет сохранено
-                # в базу данных, пока не будет вызван session.commit().
+                # сохраняем изменения
                 db.session.commit()
                 print('Добавлено в бд')
 
@@ -46,7 +43,7 @@ class UpdateTables:
         Функция для администратора форума, добавляющая подарки в бд
         :param present_name: имя подарка
         :param present_title: описание подарка
-        :param image_url: урл картинки
+        :param image_url: url картинки
         :return:
         """
         present = Presents(name=present_name, title=present_title, image=image_url)
@@ -57,7 +54,7 @@ class UpdateTables:
     @staticmethod
     def make_present(addressee, sender, id_present, present_name, comment):
         """
-        Функция для администратора форума, добавляющая подарки в бд
+        Функция, позволяющая добавлять подарки определенному пользователю
         :param comment:
         :param id_present:
         :param addressee: получатель
@@ -75,6 +72,11 @@ class UpdateTables:
 class ViewResults:
     @staticmethod
     def get_presents_of_user(user_id):
+        """
+        Функция, получающая подарки пользователя
+        :param user_id: идентификатор пользователя
+        :return:
+        """
         presents = db.session.query(UserPresents).filter(UserPresents.id_user_addressee == user_id).all()
         for i in presents:
             print(i)
