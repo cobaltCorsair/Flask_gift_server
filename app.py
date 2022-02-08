@@ -20,7 +20,7 @@ def get_post_javascript_data():
     # добавляем метод записи в бд
     # data = request.data
     if request.method == 'POST':
-        name = request.json['Name']
+        name = request.json['name']
         user_id = request.json['id']
         UpdateTables.add_new_user(name, user_id)
     return 'Запись о пользователе добавлена в базу'

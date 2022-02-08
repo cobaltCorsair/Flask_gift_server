@@ -10,10 +10,11 @@ class Username(db.Model):
     id = Column(db.Integer, primary_key=True)
     forum_id = Column(db.Integer(), index=True, nullable=False, unique=True)
     name = Column(db.String(120), nullable=False)
-    user_send = db.relationship('user_presents', backref=db.backref('user_send', cascade="all, delete-orphan"),
-                           lazy='joined')
-    user_addr = db.relationship('user_presents', backref=db.backref('user_addr', cascade="all, delete-orphan"),
-                           lazy='joined')
+    # отношения
+    user_addr = db.relationship('UserPresents', foreign_keys='UserPresents.id_user_addressee',
+                                backref=db.backref('username_a', cascade="all, delete"), lazy='joined')
+    user_send = db.relationship('UserPresents', foreign_keys='UserPresents.id_user_sender',
+                                backref=db.backref('username_s', cascade="all, delete"), lazy='joined')
 
     def __repr__(self):
         return '<User %r>' % self.name
@@ -26,10 +27,11 @@ class Presents(db.Model):
     name = Column(db.String(120), nullable=False)
     title = Column(db.String(500), nullable=False)
     image = Column(db.String(250), nullable=False)
-    id_pres = db.relationship('user_presents', backref=db.backref('id_pres', cascade="all, delete-orphan"),
-                           lazy='joined')
-    name_pres = db.relationship('user_presents', backref=db.backref('name_pres', cascade="all, delete-orphan"),
-                           lazy='joined')
+    # отношения
+    id_pres = db.relationship('UserPresents', foreign_keys='UserPresents.id_present',
+                              backref=db.backref('presents_i', cascade="all, delete"), lazy='joined')
+    name_pres = db.relationship('UserPresents', foreign_keys='UserPresents.name_present',
+                                backref=db.backref('presents_n', cascade="all, delete"), lazy='joined')
 
     def __repr__(self):
         return '<Present %r>' % self.name
