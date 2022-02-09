@@ -13,8 +13,8 @@ class UpdateTables:
     def add_new_user(person_name, user_id):
         """
         Добавляет нового пользователя в список пользователей системы подарков
+        :param user_id: идентификатор на форуме
         :param person_name: имя пользователя
-        :param id: идентификатор на форуме
         :return:
         """
         try:
@@ -27,15 +27,17 @@ class UpdateTables:
                 db.session.add(user)
                 # сохраняем изменения
                 db.session.commit()
-                print('Добавлено в бд')
-
+                return 'Добавлено в бд'
+            else:
+                return 'Такая запись уже есть'
         except IntegrityError:
             # откат в случае ошибки (неуникальный id)
             db.session.rollback()
-            print('Такая запись уже есть')
-        else:
-            # логика добавления другой записи, если id уникален
-            pass
+        finally:
+            # логика добавления другой записи после проверок на существование юзера
+            # TODO: нужна логика на случай отсутствия в базе не только отправителя, но и адресата!
+            # TODO: или вызвать эту функцию дважды для проверки и отправителя, и адресата
+            print('Можно добавить запись о подарке')
 
     @staticmethod
     def add_new_present(present_name, present_title, image_url):
@@ -49,29 +51,31 @@ class UpdateTables:
         present = Presents(name=present_name, title=present_title, image=image_url)
         db.session.add(present)
         db.session.commit()
-        print('Добавлено в бд')
+        return 'Добавлено в бд'
 
     @staticmethod
-    def make_present(addressee, sender, id_present, present_name, comment):
+    def make_present(addressee, sender, id_present, comment):
         """
         Функция, позволяющая добавлять подарки определенному пользователю
         :param comment:
         :param id_present:
         :param addressee: получатель
         :param sender: отправитель
-        :param present_name: имя подарка
         :return:
         """
-        present = UserPresents(id_user_addressee=addressee, id_user_sender=sender, id_present=id_present,
-                               name_present=present_name, comment=comment, date=datetime.now())
-        db.session.add(present)
-        db.session.commit()
-        print('Добавлено в бд')
+        try:
+            present = UserPresents(id_user_addressee=addressee, id_user_sender=sender, id_present=id_present,
+                                   comment=comment, date=datetime.now())
+            db.session.add(present)
+            db.session.commit()
+            return 'Добавлено в бд'
+        except IntegrityError:
+            return 'Вы пытаетесь добавить несуществующие в бд параметры'
 
 
 class ViewResults:
     @staticmethod
-    def get_presents_of_user(user_id):
+    def get_user_presents(user_id):
         """
         Функция, получающая подарки пользователя
         :param user_id: идентификатор пользователя
@@ -79,8 +83,8 @@ class ViewResults:
         """
         presents = db.session.query(UserPresents).filter(UserPresents.id_user_addressee == user_id).all()
         for i in presents:
-            print(i)
+            return i
         if not presents:
-            print('Пусто, подарков нет')
+            return 'Пусто, подарков нет'
 
 # print(db.session.query(Username).all())

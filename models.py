@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey
+from sqlalchemy import Column, ForeignKey, ForeignKeyConstraint
 from datetime import datetime
 from app import db
 
@@ -30,8 +30,6 @@ class Presents(db.Model):
     # отношения
     id_pres = db.relationship('UserPresents', foreign_keys='UserPresents.id_present',
                               backref=db.backref('presents_i', cascade="all, delete"), lazy='joined')
-    name_pres = db.relationship('UserPresents', foreign_keys='UserPresents.name_present',
-                                backref=db.backref('presents_n', cascade="all, delete"), lazy='joined')
 
     def __repr__(self):
         return '<Present %r>' % self.name
@@ -44,7 +42,12 @@ class UserPresents(db.Model):
     id_user_addressee = Column(db.Integer(), db.ForeignKey('username.id'))
     id_user_sender = Column(db.Integer(), db.ForeignKey('username.id'))
     id_present = Column(db.Integer(), db.ForeignKey('presents.id'))
-    name_present = Column(db.String(120), db.ForeignKey('presents.name'))
     comment = Column(db.String(500))
     date = Column(db.DateTime(), default=datetime.utcnow)
+
+    # __table_args__ = (
+    #     ForeignKeyConstraint(['id_user_addressee'], ['username.id'], name='fk_id_user_addressee'),
+    #     ForeignKeyConstraint(['id_user_sender'], ['username.id'], name='fk_id_user_sender'),
+    #     ForeignKeyConstraint(['id_present'], ['presents.id'], name='fk_id_present'),
+    # )
 
