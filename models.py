@@ -44,3 +44,14 @@ class UserPresents(db.Model):
     id_present = Column(db.Integer(), db.ForeignKey(Presents.id))
     comment = Column(db.String(500))
     date = Column(db.DateTime(), default=datetime.utcnow)
+
+    def serialize(self):
+        """Метод для сериализации объекта"""
+        return {
+                "id": self.id,
+                "id_user_addressee": self.id_user_addressee,
+                "id_user_sender": self.id_user_sender,
+                "id_present": self.id_present,
+                "comment": self.comment,
+                "date": self.date
+                }

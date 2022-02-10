@@ -1,5 +1,5 @@
 from datetime import datetime
-
+from flask import jsonify
 from models import Username, Presents, UserPresents, db
 from sqlalchemy.exc import IntegrityError
 
@@ -103,7 +103,6 @@ class UpdateTables:
             return 'Запись отсутствует в бд'
 
 
-
 class ViewResults:
     @staticmethod
     def get_user_presents(user_id):
@@ -113,9 +112,10 @@ class ViewResults:
         :return:
         """
         presents = db.session.query(UserPresents).filter(UserPresents.id_user_addressee == user_id).all()
-        for i in presents:
-            return i
         if not presents:
             return 'Пусто, подарков нет'
+
+        all_results = {presents.index(i): i.serialize() for i in presents}
+        return jsonify(all_results)
 
 # print(db.session.query(Username).all())
