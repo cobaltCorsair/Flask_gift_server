@@ -11,10 +11,10 @@ class Username(db.Model):
     forum_id = Column(db.Integer(), index=True, nullable=False, unique=True)
     name = Column(db.String(120), nullable=False)
     # отношения
-    user_addr = db.relationship('UserPresents', foreign_keys='UserPresents.id_user_addressee',
-                                backref=db.backref('username_a', cascade="all, delete-orphan"), lazy='joined')
-    user_send = db.relationship('UserPresents', foreign_keys='UserPresents.id_user_sender',
-                                backref=db.backref('username_s', cascade="all, delete-orphan"), lazy='joined')
+    user_addr = db.relationship('UserPresents', backref='username_a', cascade="all,delete",
+                                foreign_keys='UserPresents.id_user_addressee')
+    user_send = db.relationship('UserPresents', backref='username_s',
+                                foreign_keys='UserPresents.id_user_sender')
 
     def __repr__(self):
         return '<User %r>' % self.name
@@ -28,8 +28,8 @@ class Presents(db.Model):
     title = Column(db.String(500), nullable=False)
     image = Column(db.String(250), nullable=False)
     # отношения
-    id_pres = db.relationship('UserPresents', foreign_keys='UserPresents.id_present',
-                              backref=db.backref('presents_i', cascade="all, delete-orphan"), lazy='joined')
+    id_pres = db.relationship('UserPresents', backref='presents_i',
+                              cascade="all,delete", foreign_keys='UserPresents.id_present')
 
     def __repr__(self):
         return '<Present %r>' % self.name
@@ -39,9 +39,9 @@ class UserPresents(db.Model):
     """Подарки пользователей"""
     __tablename__ = 'user_presents'
     id = Column(db.Integer(), primary_key=True)
-    id_user_addressee = Column(db.Integer(), db.ForeignKey('username.id'))
-    id_user_sender = Column(db.Integer(), db.ForeignKey('username.id'))
-    id_present = Column(db.Integer(), db.ForeignKey('presents.id'))
+    id_user_addressee = Column(db.Integer(), db.ForeignKey(Username.id))
+    id_user_sender = Column(db.Integer(), db.ForeignKey(Username.id))
+    id_present = Column(db.Integer(), db.ForeignKey(Presents.id))
     comment = Column(db.String(500))
     date = Column(db.DateTime(), default=datetime.utcnow)
 

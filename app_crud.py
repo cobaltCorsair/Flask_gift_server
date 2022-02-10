@@ -74,7 +74,8 @@ class UpdateTables:
 
     @staticmethod
     def delete_present(id_present):
-        db.session.query(Presents).filter(Presents.id == id_present).delete()
+        to_delete = db.session.query(Presents).filter(Presents.id == id_present).first()
+        db.session.delete(to_delete)
         db.session.commit()
         return 'Подарок удалён'
 
