@@ -42,9 +42,12 @@ class UpdateTables:
     @staticmethod
     def delete_user(user_id):
         to_delete_user = db.session.query(Username).filter(Username.forum_id == user_id).first()
-        db.session.delete(to_delete_user)
-        db.session.commit()
-        return 'Пользователь удалён'
+        if to_delete_user is not None:
+            db.session.delete(to_delete_user)
+            db.session.commit()
+            return 'Пользователь удалён'
+        else:
+            return 'Запись отсутствует в бд'
 
     @staticmethod
     def add_new_present(present_name, present_title, image_url):
@@ -82,9 +85,23 @@ class UpdateTables:
     @staticmethod
     def delete_present(id_present):
         to_delete_present = db.session.query(Presents).filter(Presents.id == id_present).first()
-        db.session.delete(to_delete_present)
-        db.session.commit()
-        return 'Подарок удалён'
+        if to_delete_present is not None:
+            db.session.delete(to_delete_present)
+            db.session.commit()
+            return 'Подарок удалён'
+        else:
+            return 'Запись отсутствует в бд'
+
+    @staticmethod
+    def delete_made_present(id_present):
+        to_delete_made_present = db.session.query(UserPresents).filter(UserPresents.id == id_present).first()
+        if to_delete_made_present is not None:
+            db.session.delete(to_delete_made_present)
+            db.session.commit()
+            return 'Подарок удалён из списка сделанных'
+        else:
+            return 'Запись отсутствует в бд'
+
 
 
 class ViewResults:

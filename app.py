@@ -35,7 +35,6 @@ def add_new_user():
         return request_result
 
 
-
 @app.route('/deleteuser', methods=["POST"])
 @cross_origin()
 def delete_user():
@@ -86,6 +85,15 @@ def delete_present():
     if request.method == 'POST':
         id = request.json['id']
         request_result = UpdateTables.delete_present(id)
+        return request_result
+
+
+@app.route('/deletemadepresent', methods=["POST"])
+@cross_origin()
+def delete_made_present():
+    if request.method == 'POST':
+        id = request.json['id']
+        request_result = UpdateTables.delete_made_present(id)
         return request_result
 
 

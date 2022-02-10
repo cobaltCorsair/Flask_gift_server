@@ -38,6 +38,14 @@ $.ajax({
     data: JSON.stringify({'id': 1}),
 });
 
+// тестовый запрос на удаление сделанного подарка с неким id
+$.ajax({
+    url: "http://127.0.0.1:5000/deletemadepresent",
+    type: "POST",
+    contentType: "application/json",
+    data: JSON.stringify({'id': 1}),
+});
+
 // тестовый запрос на добавление подарков пользователю
 $.ajax({
     url: "http://127.0.0.1:5000/makepresent",
