@@ -44,10 +44,3 @@ class UserPresents(db.Model):
     id_present = Column(db.Integer(), db.ForeignKey(Presents.id))
     comment = Column(db.String(500))
     date = Column(db.DateTime(), default=datetime.utcnow)
-
-    # __table_args__ = (
-    #     ForeignKeyConstraint(['id_user_addressee'], ['username.id'], name='fk_id_user_addressee'),
-    #     ForeignKeyConstraint(['id_user_sender'], ['username.id'], name='fk_id_user_sender'),
-    #     ForeignKeyConstraint(['id_present'], ['presents.id'], name='fk_id_present'),
-    # )
-

@@ -6,6 +6,14 @@ $.ajax({
     data: JSON.stringify({'name':'test', 'id':1}),
 });
 
+// тестовый запрос на удаление пользователя с неким id
+$.ajax({
+    url: "http://127.0.0.1:5000/deleteuser",
+    type: "POST",
+    contentType: "application/json",
+    data: JSON.stringify({'forum_id': 1}),
+});
+
 // тестовый запрос на добавление нового подарка
 $.ajax({
     url: "http://127.0.0.1:5000/addnewpresent",

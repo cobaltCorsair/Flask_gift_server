@@ -40,6 +40,13 @@ class UpdateTables:
             print('Можно добавить запись о подарке')
 
     @staticmethod
+    def delete_user(user_id):
+        to_delete_user = db.session.query(Username).filter(Username.forum_id == user_id).first()
+        db.session.delete(to_delete_user)
+        db.session.commit()
+        return 'Пользователь удалён'
+
+    @staticmethod
     def add_new_present(present_name, present_title, image_url):
         """
         Функция для администратора форума, добавляющая подарки в бд
@@ -74,8 +81,8 @@ class UpdateTables:
 
     @staticmethod
     def delete_present(id_present):
-        to_delete = db.session.query(Presents).filter(Presents.id == id_present).first()
-        db.session.delete(to_delete)
+        to_delete_present = db.session.query(Presents).filter(Presents.id == id_present).first()
+        db.session.delete(to_delete_present)
         db.session.commit()
         return 'Подарок удалён'
 
