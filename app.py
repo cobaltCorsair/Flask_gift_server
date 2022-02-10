@@ -70,6 +70,15 @@ def make_present():
         return request_result
 
 
+@app.route('/deletepresent', methods=["POST"])
+@cross_origin()
+def delete_present():
+    if request.method == 'POST':
+        id = request.json['id']
+        request_result = UpdateTables.delete_present(id)
+        return request_result
+
+
 @app.route('/getuserpresents', methods=["POST"])
 @cross_origin()
 def get_user_presents():

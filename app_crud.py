@@ -72,6 +72,12 @@ class UpdateTables:
         except IntegrityError:
             return 'Вы пытаетесь добавить несуществующие в бд параметры'
 
+    @staticmethod
+    def delete_present(id_present):
+        db.session.query(Presents).filter(Presents.id == id_present).delete()
+        db.session.commit()
+        return 'Подарок удалён'
+
 
 class ViewResults:
     @staticmethod

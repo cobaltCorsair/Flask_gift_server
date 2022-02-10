@@ -12,9 +12,9 @@ class Username(db.Model):
     name = Column(db.String(120), nullable=False)
     # отношения
     user_addr = db.relationship('UserPresents', foreign_keys='UserPresents.id_user_addressee',
-                                backref=db.backref('username_a', cascade="all, delete"), lazy='joined')
+                                backref=db.backref('username_a', cascade="all, delete-orphan"), lazy='joined')
     user_send = db.relationship('UserPresents', foreign_keys='UserPresents.id_user_sender',
-                                backref=db.backref('username_s', cascade="all, delete"), lazy='joined')
+                                backref=db.backref('username_s', cascade="all, delete-orphan"), lazy='joined')
 
     def __repr__(self):
         return '<User %r>' % self.name
@@ -29,7 +29,7 @@ class Presents(db.Model):
     image = Column(db.String(250), nullable=False)
     # отношения
     id_pres = db.relationship('UserPresents', foreign_keys='UserPresents.id_present',
-                              backref=db.backref('presents_i', cascade="all, delete"), lazy='joined')
+                              backref=db.backref('presents_i', cascade="all, delete-orphan"), lazy='joined')
 
     def __repr__(self):
         return '<Present %r>' % self.name
