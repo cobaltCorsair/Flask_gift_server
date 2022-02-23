@@ -53,3 +53,10 @@ $.ajax({
     contentType: "application/json",
     data: JSON.stringify({'addressee': 3, 'sender': 4, 'id_present': 2, 'comment': 'тут какое-то описание'}),
 });
+
+// тестовый запрос на вывод всех подарков, которые есть в наличии
+$.ajax({
+    url: "http://127.0.0.1:5000/getallpresents",
+    type: "POST",
+    contentType: "application/json",
+});

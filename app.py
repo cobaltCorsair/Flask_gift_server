@@ -112,5 +112,17 @@ def get_user_presents():
         return request_result
 
 
+@app.route('/getallpresents', methods=["POST"])
+@cross_origin()
+def get_all_presents():
+    """
+    Получаем все существующие в базе подарки, доступные для дарения
+    :return:
+    """
+    if request.method == 'POST':
+        request_result = ViewResults.get_all_presents()
+        return request_result
+
+
 if __name__ == "__main__":
     app.run('0.0.0.0', 5000)  # запустим сервер на 5000 порту

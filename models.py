@@ -34,6 +34,15 @@ class Presents(db.Model):
     def __repr__(self):
         return '<Present %r>' % self.name
 
+    def serialize(self):
+        """Метод для сериализации объекта"""
+        return {
+                "id": self.id,
+                "name": self.name,
+                "title": self.title,
+                "image": self.image,
+                }
+
 
 class UserPresents(db.Model):
     """Подарки пользователей"""

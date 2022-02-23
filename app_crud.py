@@ -1,5 +1,4 @@
 from datetime import datetime
-from flask import jsonify
 from models import Username, Presents, UserPresents, db
 from sqlalchemy.exc import IntegrityError
 
@@ -116,6 +115,16 @@ class ViewResults:
             return 'Пусто, подарков нет'
 
         all_results = {presents.index(i): i.serialize() for i in presents}
-        return jsonify(all_results)
+        return all_results
+
+    @staticmethod
+    def get_all_presents():
+        all_presents = db.session.query(Presents).all()
+        if not all_presents:
+            return 'Подарки еще не были добавлены'
+
+        all_results = {all_presents.index(i): i.serialize() for i in all_presents}
+        return all_results
+
 
 # print(db.session.query(Username).all())
