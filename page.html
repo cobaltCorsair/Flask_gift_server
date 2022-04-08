@@ -1,0 +1,73 @@
+<div id="Basket"> </div>
+
+<script type="text/javascript">
+    (async () => {
+    let response = await fetch('http://127.0.0.1:5000/getallpresents', {
+    method: 'POST',
+    headers: {
+    'Content-Type': 'application/json'
+}
+});
+    let result = await response.json();
+    let data = JSON.parse(JSON.stringify(result));
+    let out = '';
+    for(let key in data) {
+    out+='<item><dfn id="'+data[key]['id']+'"><span>';
+    out+='<span class="name">' +data[key]['name']+'</strong></span>';
+    out+='<span class="desc">'+data[key]['title']+'</span>';
+    out+='</span></span><img src="'+data[key]['image']+'" width="60" height="60" /></dfn>';
+    out+='<button class="send">Отправить</button></item>';
+}
+    $('#Basket').html(out);
+})();
+</script>
+
+<style>
+#pun-pages .main .container {
+    overflow: visible;
+}
+dfn {
+    display: inline-block;
+    position: relative;
+    width: 60px;
+    height: 60px;
+    right: -1px;
+    padding: 5px;
+}
+dfn > span {
+  display: none;
+}
+dfn:hover > span {
+  display: block;
+  position: absolute;
+  top: calc(2em + 5px);
+  left: 1em;
+  max-width: 20em;
+  background: #212422;
+  padding: .5em;
+  z-index: 1000;
+  color: #c6b89b;
+  cursor: default;
+}
+dfn img {
+  max-width: 12em;
+}
+dfn > span span.name {
+  display: block;
+  margin-bottom: .5em;
+  font-weight: bold;
+}
+dfn > span span.desc{
+  display: block;
+  margin-bottom: .5em;
+}
+item {
+    display: inline-grid;
+    padding: 5px;
+}
+button.send {
+    font-size: 12px;
+    width: 70px;
+    padding: 0;
+}
+</style>
