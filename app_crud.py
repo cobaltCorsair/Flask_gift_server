@@ -26,9 +26,9 @@ class UpdateTables:
                 db.session.add(user)
                 # сохраняем изменения
                 db.session.commit()
-                return 'Добавлено в бд'
+                return {'answer': 'Добавлено в бд'}
             else:
-                return 'Такая запись уже есть'
+                return {'answer': 'Такая запись уже есть'}
         except IntegrityError:
             # откат в случае ошибки (неуникальный id)
             db.session.rollback()
@@ -44,9 +44,9 @@ class UpdateTables:
         if to_delete_user is not None:
             db.session.delete(to_delete_user)
             db.session.commit()
-            return 'Пользователь удалён'
+            return {'answer': 'Пользователь удалён'}
         else:
-            return 'Запись отсутствует в бд'
+            return {'answer': 'Запись отсутствует в бд'}
 
     @staticmethod
     def add_new_present(present_name, present_title, image_url):
@@ -60,7 +60,7 @@ class UpdateTables:
         present = Presents(name=present_name, title=present_title, image=image_url)
         db.session.add(present)
         db.session.commit()
-        return 'Добавлено в бд'
+        return {'answer': 'Добавлено в бд'}
 
     @staticmethod
     def make_present(addressee, sender, id_present, comment):
@@ -73,13 +73,14 @@ class UpdateTables:
         :return:
         """
         try:
+            clr_comment = comment.replace("&", "&amp;").replace('"', "&quot;").replace("<", "&lt;").replace(">", "&gt;")
             present = UserPresents(id_user_addressee=addressee, id_user_sender=sender, id_present=id_present,
-                                   comment=comment, date=datetime.now())
+                                   comment=clr_comment, date=datetime.now())
             db.session.add(present)
             db.session.commit()
-            return 'Добавлено в бд'
+            return {'answer': 'Добавлено в бд'}
         except IntegrityError:
-            return 'Вы пытаетесь добавить несуществующие в бд параметры'
+            return {'answer': 'Вы пытаетесь добавить несуществующие в бд параметры'}
 
     @staticmethod
     def delete_present(id_present):
@@ -87,9 +88,9 @@ class UpdateTables:
         if to_delete_present is not None:
             db.session.delete(to_delete_present)
             db.session.commit()
-            return 'Подарок удалён'
+            return {'answer': 'Подарок удалён'}
         else:
-            return 'Запись отсутствует в бд'
+            return {'answer': 'Запись отсутствует в бд'}
 
     @staticmethod
     def delete_made_present(id_present):
@@ -97,9 +98,9 @@ class UpdateTables:
         if to_delete_made_present is not None:
             db.session.delete(to_delete_made_present)
             db.session.commit()
-            return 'Подарок удалён из списка сделанных'
+            return {'answer': 'Подарок удалён из списка сделанных'}
         else:
-            return 'Запись отсутствует в бд'
+            return {'answer': 'Запись отсутствует в бд'}
 
 
 class ViewResults:
@@ -112,7 +113,7 @@ class ViewResults:
         """
         presents = db.session.query(UserPresents).filter(UserPresents.id_user_addressee == user_id).all()
         if not presents:
-            return 'Пусто, подарков нет'
+            return {'answer': 'Пусто, подарков нет'}
 
         all_results = {presents.index(i): i.serialize() for i in presents}
         return all_results
@@ -121,7 +122,7 @@ class ViewResults:
     def get_all_presents():
         all_presents = db.session.query(Presents).all()
         if not all_presents:
-            return 'Подарки еще не были добавлены'
+            return {'answer': 'Подарки еще не были добавлены'}
 
         all_results = {all_presents.index(i): i.serialize() for i in all_presents}
         return all_results
@@ -130,7 +131,7 @@ class ViewResults:
     def get_all_users():
         all_users = db.session.query(Username).all()
         if not all_users:
-            return 'Пользователей еще нет'
+            return {'answer': 'Пользователей еще нет'}
 
         all_results = {all_users.index(i): i.serialize() for i in all_users}
         return all_results

@@ -23,8 +23,8 @@ class Username(db.Model):
         """Метод для сериализации объекта"""
         return {
                 "id": self.id,
-                "name": self.forum_id,
-                "title": self.name
+                "forum_id": self.forum_id,
+                "name": self.name
                 }
 
 

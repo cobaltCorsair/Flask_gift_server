@@ -7,9 +7,28 @@
         <form action="" id="form" method="post" name="form">
             <img id="close" src="x" onclick="div_hide()">
             <header>Отправить подарок</header>
-            <input id="name" name="name" placeholder="Кому" type="text">
+            <select id="userList">
+            </select>
+            <script type="text/javascript">
+                (async () => {
+                    let response = await fetch('http://127.0.0.1:5000/getallusers', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    let usersData = await response.json();
+                    let users = JSON.parse(JSON.stringify(usersData));
+                    let list = '';
+                    for (let key in users) {
+                        if (users[key]['forum_id'] !== UserID) {
+                        list += '<option value="' + users[key]['forum_id'] + '">' + users[key]['name'] + '</option>';
+                    }}
+                    $('#userList').html(list);
+                })();
+            </script>
             <textarea id="msg" name="message" placeholder="Пожелание"></textarea>
-            <button class='submit'>Отправить</button>
+            <button class='submit' onclick="send_gift();return false">Отправить</button>
         </form>
     </div>
     <!-- Ends Here -->
@@ -26,8 +45,30 @@
 
     function div_hide() {
         // close form
-        $('#form > dfn').fadeOut();
+        $('#form > dfn').remove();
         document.getElementById('abc').style.display = "none";
+    }
+
+    function send_gift() {
+        // sending a gift
+        let user_list = document.getElementById("userList");
+        let user_id = user_list.options[e.selectedIndex].value;
+        let gift_id = $('#form > dfn').attr('id');
+        let message = document.getElementById('msg').value;
+        console.log(user_id, gift_id, message);
+
+        (async () => {
+                    let response = await fetch('http://127.0.0.1:5000/makepresent', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({'addressee': user_id, 'sender': UserID, 'id_present': gift_id, 'comment': message}),
+                    });
+                    let answer = await response.json();
+                    let get_answer = JSON.parse(JSON.stringify(answer));
+                    alert(get_answer['answer']);
+                })();
     }
 
     (async () => {
@@ -199,5 +240,12 @@
         position: relative;
         left: 110px;
         top: 15px;
+    }
+
+    #userList {
+        width: 298px;
+        height: 44px;
+        margin-top: 25px;
+        margin-bottom: -15px;
     }
 </style>
