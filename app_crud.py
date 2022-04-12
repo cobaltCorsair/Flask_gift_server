@@ -126,5 +126,14 @@ class ViewResults:
         all_results = {all_presents.index(i): i.serialize() for i in all_presents}
         return all_results
 
+    @staticmethod
+    def get_all_users():
+        all_users = db.session.query(Username).all()
+        if not all_users:
+            return 'Пользователей еще нет'
+
+        all_results = {all_users.index(i): i.serialize() for i in all_users}
+        return all_results
+
 
 # print(db.session.query(Username).all())

@@ -19,6 +19,14 @@ class Username(db.Model):
     def __repr__(self):
         return '<User %r>' % self.name
 
+    def serialize(self):
+        """Метод для сериализации объекта"""
+        return {
+                "id": self.id,
+                "name": self.forum_id,
+                "title": self.name
+                }
+
 
 class Presents(db.Model):
     """База подарков"""
