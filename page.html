@@ -4,7 +4,7 @@
     <!-- Starts Here -->
     <div id="popupGift">
         <!--  Form -->
-        <form action="" id="form" method="post" name="form">
+        <form action="" id="form" method="post" name="form" onsubmit="return false;">
             <img id="close" src="x" onclick="div_hide()">
             <header>Отправить подарок</header>
             <select id="userList">
@@ -28,7 +28,7 @@
                 })();
             </script>
             <textarea id="msg" name="message" placeholder="Пожелание"></textarea>
-            <button class='submit' onclick="send_gift();return false">Отправить</button>
+            <button class='submit' onclick="send_gift(); return false;">Отправить</button>
         </form>
     </div>
     <!-- Ends Here -->
@@ -52,7 +52,7 @@
     function send_gift() {
         // sending a gift
         let user_list = document.getElementById("userList");
-        let user_id = user_list.options[e.selectedIndex].value;
+        let user_id = user_list.options[user_list.selectedIndex].value;
         let gift_id = $('#form > dfn').attr('id');
         let message = document.getElementById('msg').value;
         console.log(user_id, gift_id, message);
