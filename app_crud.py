@@ -80,7 +80,7 @@ class UpdateTables:
             db.session.commit()
             return {'answer': 'Добавлено в бд'}
         except IntegrityError:
-            return {'answer': 'Вы пытаетесь добавить несуществующие в бд параметры'}
+            return {'answer': 'Вы пытаетесь добавить несуществующие в базе данных параметры'}
 
     @staticmethod
     def delete_present(id_present):
@@ -90,7 +90,7 @@ class UpdateTables:
             db.session.commit()
             return {'answer': 'Подарок удалён'}
         else:
-            return {'answer': 'Запись отсутствует в бд'}
+            return {'answer': 'Запись отсутствует в базе данных'}
 
     @staticmethod
     def delete_made_present(id_present):
@@ -100,7 +100,7 @@ class UpdateTables:
             db.session.commit()
             return {'answer': 'Подарок удалён из списка сделанных'}
         else:
-            return {'answer': 'Запись отсутствует в бд'}
+            return {'answer': 'Запись отсутствует в базе данных'}
 
 
 class ViewResults:

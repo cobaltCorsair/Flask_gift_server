@@ -56,8 +56,8 @@ class UserPresents(db.Model):
     """Подарки пользователей"""
     __tablename__ = 'user_presents'
     id = Column(db.Integer(), primary_key=True)
-    id_user_addressee = Column(db.Integer(), db.ForeignKey(Username.id))
-    id_user_sender = Column(db.Integer(), db.ForeignKey(Username.id))
+    id_user_addressee = Column(db.Integer(), db.ForeignKey(Username.forum_id))
+    id_user_sender = Column(db.Integer(), db.ForeignKey(Username.forum_id))
     id_present = Column(db.Integer(), db.ForeignKey(Presents.id))
     comment = Column(db.String(500))
     date = Column(db.DateTime(), default=datetime.utcnow)
