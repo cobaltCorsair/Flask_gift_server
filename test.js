@@ -60,3 +60,10 @@ $.ajax({
     type: "POST",
     contentType: "application/json",
 });
+
+// тестовый запрос на вывод всех пользователей в бд
+$.ajax({
+    url: "http://127.0.0.1:5000/getallusers",
+    type: "POST",
+    contentType: "application/json",
+});

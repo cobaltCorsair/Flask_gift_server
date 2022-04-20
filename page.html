@@ -1,0 +1,252 @@
+<div id="Basket"></div>
+
+<div id="abc">
+    <!-- Starts Here -->
+    <div id="popupGift">
+        <!--  Form -->
+        <form action="" id="form" method="post" name="form" onsubmit="return false;">
+            <img id="close" src="x" onclick="div_hide()">
+            <header>Отправить подарок</header>
+            <select id="userList">
+            </select>
+            <script type="text/javascript">
+                (async () => {
+                    let response = await fetch('http://127.0.0.1:5000/getallusers', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    let usersData = await response.json();
+                    let users = JSON.parse(JSON.stringify(usersData));
+                    let list = '';
+                    for (let key in users) {
+                        if (users[key]['forum_id'] !== UserID) {
+                        list += '<option value="' + users[key]['forum_id'] + '">' + users[key]['name'] + '</option>';
+                    }}
+                    $('#userList').html(list);
+                })();
+            </script>
+            <textarea id="msg" name="message" placeholder="Пожелание"></textarea>
+            <button class='submit' onclick="send_gift(); return false;">Отправить</button>
+        </form>
+    </div>
+    <!-- Ends Here -->
+</div>
+
+
+<script type="text/javascript">
+    function div_show(item_id) {
+        // show form
+        document.getElementById('abc').style.display = "block";
+        // insert present to form
+        $('dfn#' + item_id + '"').clone(true).unwrap().insertAfter('#form > header');
+    }
+
+    function div_hide() {
+        // close form
+        $('#form > dfn').remove();
+        document.getElementById('abc').style.display = "none";
+    }
+
+    function send_gift() {
+        // sending a gift
+        let user_list = document.getElementById("userList");
+        let user_id = user_list.options[user_list.selectedIndex].value;
+        let gift_id = $('#form > dfn').attr('id');
+        let message = document.getElementById('msg').value;
+        console.log(user_id, gift_id, message);
+
+        (async () => {
+                    let response = await fetch('http://127.0.0.1:5000/makepresent', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({'addressee': user_id, 'sender': UserID, 'id_present': gift_id, 'comment': message}),
+                    });
+                    let answer = await response.json();
+                    let get_answer = JSON.parse(JSON.stringify(answer));
+                    alert(get_answer['answer']);
+                    div_hide();
+                })();
+    }
+
+    (async () => {
+        let response = await fetch('http://127.0.0.1:5000/getallpresents', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        let result = await response.json();
+        let data = JSON.parse(JSON.stringify(result));
+        let out = '';
+        for (let key in data) {
+            out += '<item><dfn id="' + data[key]['id'] + '"><span>';
+            out += '<span class="name">' + data[key]['name'] + '</strong></span>';
+            out += '<span class="desc">' + data[key]['title'] + '</span>';
+            out += '</span></span><img src="' + data[key]['image'] + '" width="60" height="60" /></dfn>';
+            out += '<button class="send" onclick="div_show(' + data[key]['id'] + ')">Отправить</button></item>';
+        }
+        $('#Basket').html(out);
+    })();
+</script>
+
+<style>
+    /*Present*/
+    #pun-pages .main .container {
+        overflow: visible;
+    }
+
+    dfn {
+        display: inline-block;
+        position: relative;
+        width: 60px;
+        height: 60px;
+        right: -1px;
+        padding: 5px;
+    }
+
+    dfn > span {
+        display: none;
+    }
+
+    dfn:hover > span {
+        display: block;
+        position: absolute;
+        top: calc(1em + 5px);
+        left: 1em;
+        max-width: 20em;
+        background: #212422;
+        padding: .5em;
+        z-index: 1000;
+        color: #c6b89b;
+        cursor: default;
+    }
+
+    dfn img {
+        max-width: 12em;
+    }
+
+    dfn > span span.name {
+        display: block;
+        margin-bottom: .5em;
+        font-weight: bold;
+    }
+
+    dfn > span span.desc {
+        display: block;
+        margin-bottom: .5em;
+    }
+
+    item {
+        display: inline-grid;
+        padding: 5px;
+    }
+
+    button.send {
+        font-size: 12px;
+        width: 70px;
+        padding: 0;
+    }
+
+    /*Form*/
+    #abc {
+        width: 100%;
+        height: 100%;
+        opacity: .95;
+        top: 0;
+        left: 0;
+        display: none;
+        position: fixed;
+        background-color: #313131;
+        overflow: auto;
+        z-index: 10000
+    }
+
+    img#close {
+        position: absolute;
+        right: -14px;
+        top: -14px;
+        cursor: pointer
+    }
+
+    div#popupGift {
+        position: absolute;
+        left: 50%;
+        top: 17%;
+        margin-left: -202px;
+    }
+
+    header {
+        text-align: center;
+        font-style: normal;
+        text-transform: uppercase;
+        font-size: 17px;
+        font-weight: bold;
+        background: #ccc;
+    }
+
+    #pun-pages form {
+        max-width: 300px;
+        min-width: 250px;
+        padding: 10px 50px;
+        border: 2px solid gray;
+        border-radius: 10px;
+        background-color: #fff
+    }
+
+    #pun-pages p {
+        margin-top: 30px
+    }
+
+    #pun-pages input[type=text] {
+        width: 82%;
+        padding: 10px;
+        margin-top: 30px;
+        border: 1px solid #ccc;
+        padding-left: 40px;
+        font-size: 16px;
+    }
+
+    #pun-pages textarea {
+        width: 82%;
+        height: 95px;
+        padding: 10px;
+        resize: none;
+        margin-top: 30px;
+        border: 1px solid #ccc;
+        padding-left: 40px;
+        font-size: 16px;
+        margin-bottom: 30px;
+        min-width: 246px;
+    }
+
+    #pun-pages #submit {
+        text-decoration: none;
+        width: 100%;
+        text-align: center;
+        display: block;
+        background-color: #FFBC00;
+        color: #fff;
+        border: 1px solid #FFCB00;
+        padding: 10px 0;
+        font-size: 20px;
+        cursor: pointer;
+        border-radius: 5px
+    }
+
+    form dfn {
+        position: relative;
+        left: 110px;
+        top: 15px;
+    }
+
+    #userList {
+        width: 298px;
+        height: 44px;
+        margin-top: 25px;
+        margin-bottom: -15px;
+    }
+</style>
