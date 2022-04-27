@@ -97,6 +97,19 @@ def delete_made_present():
         return request_result
 
 
+@app.route('/addallusers', methods=["POST"])
+@cross_origin()
+def add_all_users():
+    """
+    Записываем в бд всех юзеров через запрос к апи
+    :return:
+    """
+    if request.method == 'POST':
+        url = request.json['url']
+        request_result = UpdateTables.add_all_users(url)
+        return request_result
+
+
 @app.route('/getuserpresents', methods=["POST"])
 @cross_origin()
 def get_user_presents():

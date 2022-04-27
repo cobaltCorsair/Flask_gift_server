@@ -1,6 +1,7 @@
 from datetime import datetime
 from models import Username, Presents, UserPresents, db
 from sqlalchemy.exc import IntegrityError
+import requests
 
 
 class UpdateTables:
@@ -32,11 +33,6 @@ class UpdateTables:
         except IntegrityError:
             # откат в случае ошибки (неуникальный id)
             db.session.rollback()
-        finally:
-            # логика добавления другой записи после проверок на существование юзера
-            # TODO: нужна логика на случай отсутствия в базе не только отправителя, но и адресата!
-            # TODO: или вызвать эту функцию дважды для проверки и отправителя, и адресата
-            print('Можно добавить запись о подарке')
 
     @staticmethod
     def delete_user(user_id):
@@ -101,6 +97,15 @@ class UpdateTables:
             return {'answer': 'Подарок удалён из списка сделанных'}
         else:
             return {'answer': 'Запись отсутствует в базе данных'}
+
+    @staticmethod
+    def add_all_users(url):
+        resp = requests.get(url)
+        answer = resp.json()
+        for key in answer['response']['users']:
+            print(key['username'], key['user_id'])
+            UpdateTables.add_new_user(key['username'], key['user_id'])
+        return {'answer': 'Все записи добавлены'}
 
 
 class ViewResults:

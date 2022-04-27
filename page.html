@@ -22,8 +22,9 @@
                     let list = '';
                     for (let key in users) {
                         if (users[key]['forum_id'] !== UserID) {
-                        list += '<option value="' + users[key]['forum_id'] + '">' + users[key]['name'] + '</option>';
-                    }}
+                            list += '<option value="' + users[key]['forum_id'] + '">' + users[key]['name'] + '</option>';
+                        }
+                    }
                     $('#userList').html(list);
                 })();
             </script>
@@ -58,18 +59,23 @@
         console.log(user_id, gift_id, message);
 
         (async () => {
-                    let response = await fetch('http://127.0.0.1:5000/makepresent', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({'addressee': user_id, 'sender': UserID, 'id_present': gift_id, 'comment': message}),
-                    });
-                    let answer = await response.json();
-                    let get_answer = JSON.parse(JSON.stringify(answer));
-                    alert(get_answer['answer']);
-                    div_hide();
-                })();
+            let response = await fetch('http://127.0.0.1:5000/makepresent', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    'addressee': user_id,
+                    'sender': UserID,
+                    'id_present': gift_id,
+                    'comment': message
+                }),
+            });
+            let answer = await response.json();
+            let get_answer = JSON.parse(JSON.stringify(answer));
+            alert(get_answer['answer']);
+            div_hide();
+        })();
     }
 
     (async () => {
