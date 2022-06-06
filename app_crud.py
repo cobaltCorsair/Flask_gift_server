@@ -116,12 +116,20 @@ class ViewResults:
         :param user_id: идентификатор пользователя
         :return:
         """
-        presents = db.session.query(UserPresents).filter(UserPresents.id_user_addressee == user_id).all()
+        presents = db.session.query(UserPresents, Presents).join(Presents, UserPresents.id_present == Presents.id)\
+            .filter(UserPresents.id_user_addressee == user_id).all()
         if not presents:
             return {'answer': 'Пусто, подарков нет'}
 
-        all_results = {presents.index(i): i.serialize() for i in presents}
-        return all_results
+        all_results = {presents.index(i): i for i in presents}
+        test = {}
+        for i in all_results.values():
+            a = i[0].serialize()
+            b = i[1].serialize()
+            c = {**a, **b}
+        # todo: добавить в словарь C
+        print(test)
+        # return all_results
 
     @staticmethod
     def get_all_presents():
@@ -140,6 +148,5 @@ class ViewResults:
 
         all_results = {all_users.index(i): i.serialize() for i in all_users}
         return all_results
-
 
 # print(db.session.query(Username).all())
