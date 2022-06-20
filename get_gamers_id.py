@@ -1,7 +1,7 @@
 from pprint import pprint
 import requests
 from app_crud import UpdateTables
-
+# скрипт для тестирования запроса
 resp = requests.get('https://dis.f-rpg.me/api.php?method=users.get&group_id=1,5,11&limit=500')
 # print(resp.status_code)
 # pprint(resp.json())

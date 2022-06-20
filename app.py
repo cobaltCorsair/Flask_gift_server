@@ -38,6 +38,10 @@ def add_new_user():
 @app.route('/deleteuser', methods=["POST"])
 @cross_origin()
 def delete_user():
+    """
+    Удаляем пользователя из бд
+    :return:
+    """
     if request.method == 'POST':
         id = request.json['forum_id']
         request_result = UpdateTables.delete_user(id)
@@ -82,6 +86,10 @@ def make_present():
 @app.route('/deletepresent', methods=["POST"])
 @cross_origin()
 def delete_present():
+    """
+    Удаляем подарок из базы
+    :return:
+    """
     if request.method == 'POST':
         id = request.json['id']
         request_result = UpdateTables.delete_present(id)
@@ -91,6 +99,10 @@ def delete_present():
 @app.route('/deletemadepresent', methods=["POST"])
 @cross_origin()
 def delete_made_present():
+    """
+    Удаляем сделанный подарок
+    :return:
+    """
     if request.method == 'POST':
         id = request.json['id']
         request_result = UpdateTables.delete_made_present(id)

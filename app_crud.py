@@ -80,6 +80,11 @@ class UpdateTables:
 
     @staticmethod
     def delete_present(id_present):
+        """
+        Удаление подарка из списка базы данных
+        :param id_present: Идентификатор подарка
+        :return: Сообщение об удалении/отсутствии такого подарка
+        """
         to_delete_present = db.session.query(Presents).filter(Presents.id == id_present).first()
         if to_delete_present is not None:
             db.session.delete(to_delete_present)
@@ -90,6 +95,11 @@ class UpdateTables:
 
     @staticmethod
     def delete_made_present(id_present):
+        """
+        Удаление уже сделанного подарка
+        :param id_present: Идентификатор подарка
+        :return: Сообщение об удалении/отсутствии такого подарка
+        """
         to_delete_made_present = db.session.query(UserPresents).filter(UserPresents.id == id_present).first()
         if to_delete_made_present is not None:
             db.session.delete(to_delete_made_present)
@@ -100,6 +110,11 @@ class UpdateTables:
 
     @staticmethod
     def add_all_users(url):
+        """
+        Добавляет всех юзеров разом в систему подарков
+        :param url: Юрл-адрес, передаваемый из json-запроса
+        :return: Оповещение о добавлении
+        """
         resp = requests.get(url)
         answer = resp.json()
         for key in answer['response']['users']:
@@ -120,19 +135,18 @@ class ViewResults:
             .filter(UserPresents.id_user_addressee == user_id).all()
         if not presents:
             return {'answer': 'Пусто, подарков нет'}
-
+        # возвращаем подарки в словаре из двух словарей
         all_results = {presents.index(i): i for i in presents}
-        test = {}
-        for i in all_results.values():
-            a = i[0].serialize()
-            b = i[1].serialize()
-            c = {**a, **b}
-        # todo: добавить в словарь C
-        print(test)
-        # return all_results
+        result = {i: {**x[0].serialize(), **x[1].serialize()} for i, x in enumerate(all_results.values())}
+        print(result)
+        return result
 
     @staticmethod
     def get_all_presents():
+        """
+        Получаем все подарки базы данных
+        :return: Результат запроса
+        """
         all_presents = db.session.query(Presents).all()
         if not all_presents:
             return {'answer': 'Подарки еще не были добавлены'}
@@ -142,6 +156,10 @@ class ViewResults:
 
     @staticmethod
     def get_all_users():
+        """
+        Получаем всех юзеров системы подарков
+        :return: Результат запроса
+        """
         all_users = db.session.query(Username).all()
         if not all_users:
             return {'answer': 'Пользователей еще нет'}
