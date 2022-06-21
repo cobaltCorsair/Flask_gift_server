@@ -22,7 +22,7 @@
                     let list = '';
                     for (let key in users) {
                         if (users[key]['forum_id'] !== UserID) {
-                            list += '<option value="' + users[key]['forum_id'] + '">' + users[key]['name'] + '</option>';
+                            list += '<option value="' + users[key]['forum_id'] + '">' + users[key]['forum_name'] + '</option>';
                         }
                     }
                     $('#userList').html(list);

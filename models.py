@@ -9,7 +9,7 @@ class Username(db.Model):
     __tablename__ = 'username'
     id = Column(db.Integer, primary_key=True)
     forum_id = Column(db.Integer(), index=True, nullable=False, unique=True)
-    name = Column(db.String(120), nullable=False)
+    forum_name = Column(db.String(120), nullable=False)
     # отношения
     user_addr = db.relationship('UserPresents', backref='username_a', cascade="all,delete",
                                 foreign_keys='UserPresents.id_user_addressee')
@@ -17,14 +17,14 @@ class Username(db.Model):
                                 foreign_keys='UserPresents.id_user_sender')
 
     def __repr__(self):
-        return '<User %r>' % self.name
+        return '<User %r>' % self.forum_name
 
     def serialize(self):
         """Метод для сериализации объекта"""
         return {
                 "id": self.id,
                 "forum_id": self.forum_id,
-                "name": self.name
+                "forum_name": self.forum_name
                 }
 
 
@@ -70,5 +70,5 @@ class UserPresents(db.Model):
                 "id_user_sender": self.id_user_sender,
                 "id_present": self.id_present,
                 "comment": self.comment,
-                "date": self.date
+                "date": self.date.strftime("%d:%m:%Y")
                 }

@@ -29,9 +29,9 @@ def add_new_user():
     # добавляем метод записи в бд
     # data = request.data
     if request.method == 'POST':
-        name = request.json['name']
+        forum_name = request.json['forum_name']
         user_id = request.json['id']
-        request_result = UpdateTables.add_new_user(name, user_id)
+        request_result = UpdateTables.add_new_user(forum_name, user_id)
         return request_result
 
 
