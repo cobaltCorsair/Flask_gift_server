@@ -1,11 +1,13 @@
+<div id="NewPresent">Добавить новый подарок</div>
+
 <div id="Basket"></div>
 
-<div id="abc">
+<div id="sendGift">
     <!-- Starts Here -->
     <div id="popupGift">
         <!--  Form -->
         <form action="" id="form" method="post" name="form" onsubmit="return false;">
-            <img id="close" src="x" onclick="div_hide()">
+            <img id="close" src="x" onclick="send_win_hide()">
             <header>Отправить подарок</header>
             <select id="userList">
             </select>
@@ -35,20 +37,72 @@
     <!-- Ends Here -->
 </div>
 
+<div id="addNewGift">
+    <!-- Starts Here -->
+    <div id="popupAdd">
+        <!--  Form -->
+        <form action="" id="form" method="post" name="form" onsubmit="return false;">
+            <img id="close" src="x" onclick="add_win_hide()">
+            <header>Добавить новый подарок</header>
+            <textarea id="nm" name="name" placeholder="Название подарка"></textarea>
+            <textarea id="img" name="image" placeholder="URL картинки подарка, строго 60х60"></textarea>
+            <textarea id="ttl" name="title" placeholder="Краткое описание подарка"></textarea>
+            <button class='submit' onclick="add_gift(); return false;">Отправить</button>
+        </form>
+    </div>
+    <!-- Ends Here -->
+</div>
 
 <script type="text/javascript">
-    function div_show(item_id) {
+    function send_win_show(item_id) {
         // show form
-        document.getElementById('abc').style.display = "block";
+        document.getElementById('sendGift').style.display = "block";
         // insert present to form
-        $('dfn#' + item_id + '"').clone(true).unwrap().insertAfter('#form > header');
+        $('dfn#' + item_id + '"').clone(true).unwrap().insertAfter('#popupGift > #form > header');
     }
 
-    function div_hide() {
+    function send_win_hide() {
         // close form
         $('#form > dfn').remove();
-        document.getElementById('abc').style.display = "none";
-        document.getElementById("form").reset();
+        document.getElementById('sendGift').style.display = "none";
+        document.getElementById('form').reset();
+    }
+
+    function add_win_show() {
+        // show form
+        document.getElementById('addNewGift').style.display = "block";
+    }
+
+    function add_win_hide() {
+        // close form
+        $('#form > dfn').remove();
+        document.getElementById('addNewGift').style.display = "none";
+        document.getElementById('form').reset();
+    }
+
+    function add_gift() {
+        let name = document.getElementById('nm').value;
+        let image = document.getElementById('img').value;
+        let title = document.getElementById('ttl').value;
+
+        (async () => {
+            let response = await fetch('http://127.0.0.1:5000/addnewpresent', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    'name': name,
+                    'title': title,
+                    'image': image,
+                }),
+            });
+            let answer = await response.json();
+            let get_answer = JSON.parse(JSON.stringify(answer));
+            alert(get_answer['answer']);
+            send_win_hide();
+        })();
+
     }
 
     function send_gift() {
@@ -75,7 +129,7 @@
             let answer = await response.json();
             let get_answer = JSON.parse(JSON.stringify(answer));
             alert(get_answer['answer']);
-            div_hide();
+            send_win_hide();
         })();
     }
 
@@ -118,7 +172,7 @@
             out += '<span class="name">' + data[key]['name'] + '</strong></span>';
             out += '<span class="desc">' + data[key]['title'] + '</span>';
             out += '</span></span><img src="' + data[key]['image'] + '" width="60" height="60" /></dfn>';
-            out += '<button class="send" onclick="div_show(' + data[key]['id'] + ')">Отправить</button></item>';
+            out += '<button class="send" onclick="send_win_show(' + data[key]['id'] + ')">Отправить</button></item>';
         }
         $('#Basket').html(out);
         delete_gift_from_main_list();
@@ -150,6 +204,16 @@
         z-index: 10;
         top: 13px;
         font-size: 14px;
+    }
+
+    #NewPresent {
+        position: relative;
+        padding: 10px;
+        cursor: pointer;
+        float: right;
+        width: 147px;
+        height: 10px;
+        margin-top: -57px;
     }
 
     dfn:hover > span {
@@ -192,7 +256,7 @@
     }
 
     /*Form*/
-    #abc {
+    #sendGift, #addNewGift {
         width: 100%;
         height: 100%;
         opacity: .95;
@@ -212,7 +276,7 @@
         cursor: pointer
     }
 
-    div#popupGift {
+    div#popupGift, div#popupAdd {
         position: absolute;
         left: 50%;
         top: 17%;
