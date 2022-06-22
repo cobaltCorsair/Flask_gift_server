@@ -79,6 +79,26 @@
         })();
     }
 
+    function delete_gift_from_main_list() {
+        // delete a gift
+        $('strong.del').click(function () {
+            let deletedID = $(this).attr('data-uid');
+            (async () => {
+                let response = await fetch('http://127.0.0.1:5000/deletepresent', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({'id': deletedID}),
+                });
+                let answer = await response.json();
+                let get_answer = JSON.parse(JSON.stringify(answer));
+                $(this).parent().remove();
+                alert(get_answer['answer']);
+            })();
+        });
+    }
+
     (async () => {
         let response = await fetch('http://127.0.0.1:5000/getallpresents', {
             method: 'POST',
@@ -90,13 +110,18 @@
         let data = JSON.parse(JSON.stringify(result));
         let out = '';
         for (let key in data) {
-            out += '<item><dfn id="' + data[key]['id'] + '"><span>';
+            out += '<item>';
+            if (GroupID == 1) {
+                out += '<strong class="del" title="Удалить" data-uid="' + data[key]['id'] + '"> × </strong>';
+            }
+            out += '<dfn id="' + data[key]['id'] + '"><span>';
             out += '<span class="name">' + data[key]['name'] + '</strong></span>';
             out += '<span class="desc">' + data[key]['title'] + '</span>';
             out += '</span></span><img src="' + data[key]['image'] + '" width="60" height="60" /></dfn>';
             out += '<button class="send" onclick="div_show(' + data[key]['id'] + ')">Отправить</button></item>';
         }
         $('#Basket').html(out);
+        delete_gift_from_main_list();
     })();
 </script>
 
@@ -117,6 +142,14 @@
 
     dfn > span {
         display: none;
+    }
+
+    strong.del {
+        left: 59px;
+        position: relative;
+        z-index: 10;
+        top: 13px;
+        font-size: 14px;
     }
 
     dfn:hover > span {
