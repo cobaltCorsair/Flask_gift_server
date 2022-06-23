@@ -1,4 +1,5 @@
-<div id="NewPresent">Добавить новый подарок</div>
+<div id="NewPresent" onclick="add_win_show(); return false;">Добавить новый подарок</div>
+<div id="RefreshUserList" onclick="refresh_user_list(); return false;">Обновить список пользователей</div>
 
 <div id="Basket"></div>
 
@@ -65,7 +66,7 @@
         // close form
         $('#form > dfn').remove();
         document.getElementById('sendGift').style.display = "none";
-        document.getElementById('form').reset();
+        $('#popupGift> #form')[0].reset();
     }
 
     function add_win_show() {
@@ -77,32 +78,7 @@
         // close form
         $('#form > dfn').remove();
         document.getElementById('addNewGift').style.display = "none";
-        document.getElementById('form').reset();
-    }
-
-    function add_gift() {
-        let name = document.getElementById('nm').value;
-        let image = document.getElementById('img').value;
-        let title = document.getElementById('ttl').value;
-
-        (async () => {
-            let response = await fetch('http://127.0.0.1:5000/addnewpresent', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    'name': name,
-                    'title': title,
-                    'image': image,
-                }),
-            });
-            let answer = await response.json();
-            let get_answer = JSON.parse(JSON.stringify(answer));
-            alert(get_answer['answer']);
-            send_win_hide();
-        })();
-
+        $('#popupAdd > #form')[0].reset();
     }
 
     function send_gift() {
@@ -153,30 +129,60 @@
         });
     }
 
-    (async () => {
-        let response = await fetch('http://127.0.0.1:5000/getallpresents', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
+    function create_present_list() {
+        // create presents list on page
+        (async () => {
+            let response = await fetch('http://127.0.0.1:5000/getallpresents', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            let result = await response.json();
+            let data = JSON.parse(JSON.stringify(result));
+            let out = '';
+            for (let key in data) {
+                out += '<item>';
+                if (GroupID == 1) {
+                    out += '<strong class="del" title="Удалить" data-uid="' + data[key]['id'] + '"> × </strong>';
+                }
+                out += '<dfn id="' + data[key]['id'] + '"><span>';
+                out += '<span class="name">' + data[key]['name'] + '</strong></span>';
+                out += '<span class="desc">' + data[key]['title'] + '</span>';
+                out += '</span></span><img src="' + data[key]['image'] + '" width="60" height="60" /></dfn>';
+                out += '<button class="send" onclick="send_win_show(' + data[key]['id'] + ')">Отправить</button></item>';
             }
-        });
-        let result = await response.json();
-        let data = JSON.parse(JSON.stringify(result));
-        let out = '';
-        for (let key in data) {
-            out += '<item>';
-            if (GroupID == 1) {
-                out += '<strong class="del" title="Удалить" data-uid="' + data[key]['id'] + '"> × </strong>';
-            }
-            out += '<dfn id="' + data[key]['id'] + '"><span>';
-            out += '<span class="name">' + data[key]['name'] + '</strong></span>';
-            out += '<span class="desc">' + data[key]['title'] + '</span>';
-            out += '</span></span><img src="' + data[key]['image'] + '" width="60" height="60" /></dfn>';
-            out += '<button class="send" onclick="send_win_show(' + data[key]['id'] + ')">Отправить</button></item>';
-        }
-        $('#Basket').html(out);
-        delete_gift_from_main_list();
-    })();
+            $('#Basket').html(out);
+            delete_gift_from_main_list();
+        })();
+    }
+
+    function add_gift() {
+        let name = document.getElementById('nm').value;
+        let image = document.getElementById('img').value;
+        let title = document.getElementById('ttl').value;
+
+        (async () => {
+            let response = await fetch('http://127.0.0.1:5000/addnewpresent', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    'name': name,
+                    'title': title,
+                    'image': image,
+                }),
+            });
+            let answer = await response.json();
+            let get_answer = JSON.parse(JSON.stringify(answer));
+            alert(get_answer['answer']);
+            add_win_hide();
+            create_present_list();
+        })();
+    }
+
+    create_present_list();
 </script>
 
 <style>
@@ -204,16 +210,7 @@
         z-index: 10;
         top: 13px;
         font-size: 14px;
-    }
-
-    #NewPresent {
-        position: relative;
-        padding: 10px;
         cursor: pointer;
-        float: right;
-        width: 147px;
-        height: 10px;
-        margin-top: -57px;
     }
 
     dfn:hover > span {
@@ -287,7 +284,7 @@
         text-align: center;
         font-style: normal;
         text-transform: uppercase;
-        font-size: 17px;
+        font-size: 13px;
         font-weight: bold;
         background: #ccc;
     }
@@ -299,6 +296,48 @@
         border: 2px solid gray;
         border-radius: 10px;
         background-color: #fff
+    }
+
+    #popupGift #msg {
+        font-size: 14px;
+        margin-bottom: 5px;
+        margin-top: 18px;
+    }
+
+    #popupAdd #form {
+        width: 300px;
+    }
+
+    #popupAdd #nm {
+        font-size: 14px;
+        padding: 5px;
+        width: 96%;
+        margin-bottom: 5px;
+        height: 36px;
+    }
+
+    #popupAdd #img {
+        height: 36px;
+        font-size: 14px;
+        padding: 5px;
+        width: 96%;
+        margin-bottom: 5px;
+        margin-top: 5px;
+    }
+
+    #popupAdd #ttl {
+        font-size: 14px;
+        padding: 5px;
+        width: 96%;
+        margin-bottom: 5px;
+        margin-top: 5px;
+    }
+
+    button.submit {
+        margin-left: 109px;
+        margin-top: 5px;
+        padding: 5px;
+        width: 80px;
     }
 
     #pun-pages p {
@@ -347,10 +386,10 @@
         top: 15px;
     }
 
-    #userList {
-        width: 298px;
-        height: 44px;
-        margin-top: 25px;
-        margin-bottom: -15px;
+    #NewPresent, #RefreshUserList {
+        position: relative;
+        padding-right: 10px;
+        cursor: pointer;
+        float: left;
     }
 </style>

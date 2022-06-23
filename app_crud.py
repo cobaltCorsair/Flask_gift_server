@@ -53,10 +53,13 @@ class UpdateTables:
         :param image_url: url картинки
         :return:
         """
-        present = Presents(name=present_name, title=present_title, image=image_url)
-        db.session.add(present)
-        db.session.commit()
-        return {'answer': 'Добавлено в бд'}
+        if len(present_name) != 0 and len(image_url) != 0:
+            present = Presents(name=present_name, title=present_title, image=image_url)
+            db.session.add(present)
+            db.session.commit()
+            return {'answer': 'Добавлено в бд'}
+        else:
+            return {'answer': 'Заполните необходимые поля!'}
 
     @staticmethod
     def make_present(addressee, sender, id_present, comment):
@@ -131,9 +134,9 @@ class ViewResults:
         :param user_id: идентификатор пользователя
         :return:
         """
-        presents = db.session.query(UserPresents, Presents, Username)\
-            .join(Presents, UserPresents.id_present == Presents.id)\
-            .join(Username, UserPresents.id_user_sender == Username.forum_id)\
+        presents = db.session.query(UserPresents, Presents, Username) \
+            .join(Presents, UserPresents.id_present == Presents.id) \
+            .join(Username, UserPresents.id_user_sender == Username.forum_id) \
             .filter(UserPresents.id_user_addressee == user_id).all()
         if not presents:
             return {'answer': 'Пусто, подарков нет'}
