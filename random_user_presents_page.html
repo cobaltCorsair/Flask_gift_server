@@ -2,6 +2,10 @@
 
 <script type="text/javascript">
     function create_present_list() {
+        // get user id
+        let params = (new URL(document.location)).searchParams;
+        let otherUID = params.get("id");
+
         // create user presents list
         (async () => {
             let response = await fetch('http://127.0.0.1:5000/getuserpresents', {
@@ -10,9 +14,10 @@
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    'id': UserID
+                    'id': otherUID
                 }),
             });
+
             let result = await response.json();
             let data = JSON.parse(JSON.stringify(result));
             if (!data['answer']) {
