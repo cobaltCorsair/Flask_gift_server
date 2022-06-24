@@ -142,9 +142,8 @@ class ViewResults:
             return {'answer': 'Пусто, подарков нет'}
         # возвращаем подарки в словаре из трех словарей
         all_results = {presents.index(i): i for i in presents}
-        result = {i: {**x[0].serialize(), **x[1].serialize(), **x[2].serialize()}
+        result = {i: {**x[1].serialize(), **x[2].serialize(), **x[0].serialize()}
                   for i, x in enumerate(all_results.values())}
-        print(result)
         return result
 
     @staticmethod
