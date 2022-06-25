@@ -17,22 +17,25 @@ class UpdateTables:
         :param person_name: имя пользователя
         :return:
         """
-        try:
-            # проверяем, существует ли такой юзер в бд
-            user = db.session.query(Username).filter(Username.forum_id == user_id).all()
-            #  если нет, то записываем
-            if not user:
-                user = Username(forum_name=person_name, forum_id=user_id)
-                # чтобы сохранить наш объект user, мы добавляем его в сессию:
-                db.session.add(user)
-                # сохраняем изменения
-                db.session.commit()
-                return {'answer': 'Добавлено в бд'}
-            else:
-                return {'answer': 'Такая запись уже есть'}
-        except IntegrityError:
-            # откат в случае ошибки (неуникальный id)
-            db.session.rollback()
+        if len(person_name) != 0 and user_id > 0:
+            try:
+                # проверяем, существует ли такой юзер в бд
+                user = db.session.query(Username).filter(Username.forum_id == user_id).all()
+                #  если нет, то записываем
+                if not user:
+                    user = Username(forum_name=person_name, forum_id=user_id)
+                    # чтобы сохранить наш объект user, мы добавляем его в сессию:
+                    db.session.add(user)
+                    # сохраняем изменения
+                    db.session.commit()
+                    return {'answer': 'Добавлено в бд'}
+                else:
+                    return {'answer': 'Такая запись уже есть'}
+            except IntegrityError:
+                # откат в случае ошибки (неуникальный id)
+                db.session.rollback()
+        else:
+            return {'answer': 'Заполните необходимые поля!'}
 
     @staticmethod
     def delete_user(user_id):

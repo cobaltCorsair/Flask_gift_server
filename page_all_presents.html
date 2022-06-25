@@ -1,6 +1,7 @@
 <div id="AdminMenu">
     <div id="NewPresent" onclick="add_win_show(); return false;">Добавить новый подарок</div>
     <div id="RefreshUserList" onclick="refresh_user_list(); return false;">Обновить список пользователей</div>
+    <div id="AddUserToList" onclick="add_user_win_show(); return false;">Добавить пользователя вручную</div>
 </div>
 
 <div id="Basket"></div>
@@ -51,6 +52,21 @@
             <textarea id="img" name="image" placeholder="URL картинки подарка, строго 60х60"></textarea>
             <textarea id="ttl" name="title" placeholder="Краткое описание подарка"></textarea>
             <button class='submit' onclick="add_gift(); return false;">Отправить</button>
+        </form>
+    </div>
+    <!-- Ends Here -->
+</div>
+
+<div id="addNewUser">
+    <!-- Starts Here -->
+    <div id="popupUserAdd">
+        <!--  Form -->
+        <form action="" id="form" method="post" name="form" onsubmit="return false;">
+            <img id="close" src="x" onclick="add_user_win_hide()">
+            <header>Добавить нового пользователя</header>
+            <textarea id="fid" name="forum_id" placeholder="ID пользователя"></textarea>
+            <textarea id="fnm" name="forum_name" placeholder="Имя пользователя"></textarea>
+            <button class='submit' onclick="add_new_user(); return false;">Отправить</button>
         </form>
     </div>
     <!-- Ends Here -->
@@ -188,6 +204,61 @@
         })();
     }
 
+    function refresh_user_list() {
+        // updates the list of users by group
+        (async () => {
+            let current_forum = window.location.hostname;
+            let forum_groups = '1'
+            let req = 'https://' + current_forum + '/api.php?method=users.get&group_id=' + forum_groups + '&limit=500'
+            let response = await fetch('http://127.0.0.1:5000/addallusers', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    'url': req,
+                }),
+            });
+            let answer = await response.json();
+            let get_answer = JSON.parse(JSON.stringify(answer));
+            alert(get_answer['answer']);
+        })();
+    }
+
+    function add_user_win_show() {
+        // show form
+        document.getElementById('addNewUser').style.display = "block";
+    }
+
+    function add_new_user() {
+        let name = document.getElementById('fnm').value;
+        let id = document.getElementById('fid').value;
+
+        (async () => {
+            let response = await fetch('http://127.0.0.1:5000/addnewuser', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    'forum_name': name,
+                    'id': +id,
+                }),
+            });
+            let answer = await response.json();
+            let get_answer = JSON.parse(JSON.stringify(answer));
+            alert(get_answer['answer']);
+            add_user_win_hide();
+        })();
+    }
+
+    function add_user_win_hide() {
+        // close form
+        $('#form > dfn').remove();
+        document.getElementById('addNewUser').style.display = "none";
+        $('#popupUserAdd> #form')[0].reset();
+    }
+
     create_present_list();
 </script>
 
@@ -259,7 +330,7 @@
     }
 
     /*Form*/
-    #sendGift, #addNewGift {
+    #sendGift, #addNewGift, #addNewUser {
         width: 100%;
         height: 100%;
         opacity: .95;
@@ -279,7 +350,7 @@
         cursor: pointer
     }
 
-    div#popupGift, div#popupAdd {
+    div#popupGift, div#popupAdd, div#popupUserAdd {
         position: absolute;
         left: 50%;
         top: 17%;
@@ -391,7 +462,7 @@
         left: -3px;
     }
 
-    #NewPresent, #RefreshUserList {
+    #NewPresent, #RefreshUserList, #AddUserToList {
         position: relative;
         padding-right: 10px;
         cursor: pointer;
@@ -409,5 +480,14 @@
         height: 21px;
         border: 1px solid #ccc;
         font-size: 12px;
+    }
+
+    #pun-pages #fid, #pun-pages #fnm {
+        height: 20px;
+        margin-bottom: 5px;
+        font-size: 14px;
+    }
+    #pun-pages #fnm {
+        margin-top: 5px;
     }
 </style>
