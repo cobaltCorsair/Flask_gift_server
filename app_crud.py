@@ -1,5 +1,5 @@
 from datetime import datetime
-from models import Username, Presents, UserPresents, db
+from models import Username, Presents, UserPresents, Limits, db
 from sqlalchemy.exc import IntegrityError
 import requests
 
@@ -17,7 +17,7 @@ class UpdateTables:
         :param person_name: имя пользователя
         :return:
         """
-        if len(person_name) != 0 and user_id > 0:
+        if len(person_name) != 0 and int(user_id) > 0:
             try:
                 # проверяем, существует ли такой юзер в бд
                 user = db.session.query(Username).filter(Username.forum_id == user_id).all()
@@ -26,6 +26,7 @@ class UpdateTables:
                     user = Username(forum_name=person_name, forum_id=user_id)
                     # чтобы сохранить наш объект user, мы добавляем его в сессию:
                     db.session.add(user)
+                    UpdateTables.limit_for_user(user_id)
                     # сохраняем изменения
                     db.session.commit()
                     return {'answer': 'Добавлено в бд'}
@@ -74,11 +75,14 @@ class UpdateTables:
         :param sender: отправитель
         :return:
         """
+        # TODO: ввести ограничение по лимиту, если меньше единицы
         try:
             clr_comment = comment.replace("&", "&amp;").replace('"', "&quot;").replace("<", "&lt;").replace(">", "&gt;")
             present = UserPresents(id_user_addressee=addressee, id_user_sender=sender, id_present=id_present,
                                    comment=clr_comment, date=datetime.now())
             db.session.add(present)
+            # TODO: Доделать запрос на уменьшение
+            UpdateTables.reduction_limit(addressee)
             db.session.commit()
             return {'answer': 'Добавлено в бд'}
         except IntegrityError:
@@ -127,6 +131,29 @@ class UpdateTables:
             print(key['username'], key['user_id'])
             UpdateTables.add_new_user(key['username'], key['user_id'])
         return {'answer': 'Все записи добавлены'}
+
+    @staticmethod
+    def limit_for_user(user_id):
+        # добавляем юзера в таблицу с лимитами
+        limits = Limits(user_forum_id=user_id, limit=10)
+        db.session.add(limits)
+
+    @staticmethod
+    def update_limits_everyday():
+        # обновляем лимиты
+        db.session.query(Limits).update({
+            Limits.limit: 10,
+        }, synchronize_session=False)
+        # сохраняем изменения
+        db.session.commit()
+
+    @staticmethod
+    def reduction_limit(user_id):
+        # уменьшаем лимит на единицу
+        # TODO: Доделать запрос на уменьшение
+        db.session.query(Limits).filter(Limits.user_forum_id == user_id).first().update({
+            Limits.limit: Limits.limit - 1,
+        }, synchronize_session=False)
 
 
 class ViewResults:

@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS, cross_origin
+from apscheduler.schedulers.background import BackgroundScheduler
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -160,6 +161,15 @@ def get_all_users():
         request_result = ViewResults.get_all_users()
         return request_result
 
+
+def reset_limits():
+    print('Scheduler alive')
+    UpdateTables.update_limits_everyday()
+
+
+sheduler = BackgroundScheduler(daemon=True)
+sheduler.add_job(reset_limits, 'interval', hours=24)
+sheduler.start()
 
 if __name__ == "__main__":
     app.run('0.0.0.0', 5000)  # запустим сервер на 5000 порту
