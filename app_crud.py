@@ -75,18 +75,20 @@ class UpdateTables:
         :param sender: отправитель
         :return:
         """
-        # TODO: ввести ограничение по лимиту, если меньше единицы
-        try:
-            clr_comment = comment.replace("&", "&amp;").replace('"', "&quot;").replace("<", "&lt;").replace(">", "&gt;")
-            present = UserPresents(id_user_addressee=addressee, id_user_sender=sender, id_present=id_present,
-                                   comment=clr_comment, date=datetime.now())
-            db.session.add(present)
-            # TODO: Доделать запрос на уменьшение
-            UpdateTables.reduction_limit(addressee)
-            db.session.commit()
-            return {'answer': 'Добавлено в бд'}
-        except IntegrityError:
-            return {'answer': 'Вы пытаетесь добавить несуществующие в базе данных параметры'}
+        get_lim = db.session.query(Limits.limit).filter(Limits.user_forum_id == sender).first()
+        if get_lim[0] > 0:
+            try:
+                clr_comment = comment.replace("&", "&amp;").replace('"', "&quot;").replace("<", "&lt;").replace(">", "&gt;")
+                present = UserPresents(id_user_addressee=addressee, id_user_sender=sender, id_present=id_present,
+                                       comment=clr_comment, date=datetime.now())
+                db.session.add(present)
+                UpdateTables.reduction_limit(sender)
+                db.session.commit()
+                return {'answer': 'Добавлено в бд'}
+            except IntegrityError:
+                return {'answer': 'Вы пытаетесь добавить несуществующие в базе данных параметры'}
+        else:
+            return {'answer': 'Вы превысили суточный лимит отправки подарков'}
 
     @staticmethod
     def delete_present(id_present):
@@ -150,8 +152,7 @@ class UpdateTables:
     @staticmethod
     def reduction_limit(user_id):
         # уменьшаем лимит на единицу
-        # TODO: Доделать запрос на уменьшение
-        db.session.query(Limits).filter(Limits.user_forum_id == user_id).first().update({
+        db.session.query(Limits).filter(Limits.user_forum_id == user_id).update({
             Limits.limit: Limits.limit - 1,
         }, synchronize_session=False)
 
