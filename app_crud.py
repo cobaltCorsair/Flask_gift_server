@@ -137,17 +137,18 @@ class UpdateTables:
     @staticmethod
     def limit_for_user(user_id):
         # добавляем юзера в таблицу с лимитами
-        limits = Limits(user_forum_id=user_id, limit=10)
+        limits = Limits(user_forum_id=user_id, limit=5)
         db.session.add(limits)
 
     @staticmethod
     def update_limits_everyday():
         # обновляем лимиты
         db.session.query(Limits).update({
-            Limits.limit: 10,
+            Limits.limit: 5,
         }, synchronize_session=False)
         # сохраняем изменения
         db.session.commit()
+        return {'answer': 'Лимиты обновлены'}
 
     @staticmethod
     def reduction_limit(user_id):

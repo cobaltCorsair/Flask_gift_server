@@ -1,7 +1,9 @@
 <div id="AdminMenu">
-    <div id="NewPresent" onclick="add_win_show(); return false;">Добавить новый подарок</div>
+    <div id="NewPresent" onclick="add_win_show(); return false;">Создать новый подарок</div>
     <div id="RefreshUserList" onclick="refresh_user_list(); return false;">Обновить список пользователей</div>
     <div id="AddUserToList" onclick="add_user_win_show(); return false;">Добавить пользователя вручную</div>
+    <div id="DelUserFromList" onclick="del_user_win_show(); return false;">Удалить пользователя</div>
+    <div id="ResetLimits" onclick="reset_limits(); return false;">Сбросить лимиты</div>
 </div>
 
 <div id="Basket"></div>
@@ -48,6 +50,7 @@
         <form action="" id="form" method="post" name="form" onsubmit="return false;">
             <img id="close" src="x" onclick="add_win_hide()">
             <header>Добавить новый подарок</header>
+            <p id="info">Добавляет новый подарок в систему подарков</p>
             <textarea id="nm" name="name" placeholder="Название подарка"></textarea>
             <textarea id="img" name="image" placeholder="URL картинки подарка, строго 60х60"></textarea>
             <textarea id="ttl" name="title" placeholder="Краткое описание подарка"></textarea>
@@ -64,9 +67,25 @@
         <form action="" id="form" method="post" name="form" onsubmit="return false;">
             <img id="close" src="x" onclick="add_user_win_hide()">
             <header>Добавить нового пользователя</header>
+            <p id="info">Добавляет пользователя в систему подарков</p>
             <textarea id="fid" name="forum_id" placeholder="ID пользователя"></textarea>
             <textarea id="fnm" name="forum_name" placeholder="Имя пользователя"></textarea>
             <button class='submit' onclick="add_new_user(); return false;">Отправить</button>
+        </form>
+    </div>
+    <!-- Ends Here -->
+</div>
+
+<div id="delUser">
+    <!-- Starts Here -->
+    <div id="popupUserDel">
+        <!--  Form -->
+        <form action="" id="form" method="post" name="form" onsubmit="return false;">
+            <img id="close" src="x" onclick="del_user_win_hide()">
+            <header>Удалить пользователя</header>
+            <p id="info">Удаляет пользователя из системы подарков</p>
+            <textarea id="del_fid" name="forum_id" placeholder="ID пользователя"></textarea>
+            <button class='submit' onclick="del_user(); return false;">Отправить</button>
         </form>
     </div>
     <!-- Ends Here -->
@@ -97,6 +116,58 @@
         $('#form > dfn').remove();
         document.getElementById('addNewGift').style.display = "none";
         $('#popupAdd > #form')[0].reset();
+    }
+
+    function add_user_win_show() {
+        // show form
+        document.getElementById('addNewUser').style.display = "block";
+    }
+
+    function add_user_win_hide() {
+        // close form
+        $('#form > dfn').remove();
+        document.getElementById('addNewUser').style.display = "none";
+        $('#popupUserAdd> #form')[0].reset();
+    }
+
+    function del_user_win_show() {
+        // show form
+        document.getElementById('delUser').style.display = "block";
+    }
+
+    function del_user_win_hide() {
+        // close form
+        $('#form > dfn').remove();
+        document.getElementById('delUser').style.display = "none";
+        $('#popupUserDel> #form')[0].reset();
+
+    }
+
+    function add_new_user() {
+        // add new user to db
+        if (GroupID === 1) {
+            let name = document.getElementById('fnm').value;
+            let id = document.getElementById('fid').value;
+
+            (async () => {
+                let response = await fetch('http://127.0.0.1:5000/addnewuser', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        'forum_name': name,
+                        'id': +id,
+                    }),
+                });
+                let answer = await response.json();
+                let get_answer = JSON.parse(JSON.stringify(answer));
+                alert(get_answer['answer']);
+                add_user_win_hide();
+            })();
+        } else {
+            alert('Эта функция предназначена только для администратора!')
+        }
     }
 
     function send_gift() {
@@ -169,7 +240,10 @@
                     out += '<span class="name">' + data[key]['name'] + '</strong></span>';
                     out += '<span class="desc">' + data[key]['title'] + '</span>';
                     out += '</span></span><img src="' + data[key]['image'] + '" width="60" height="60" /></dfn>';
-                    out += '<button class="send" onclick="send_win_show(' + data[key]['id'] + ')">Отправить</button></item>';
+                    if (GroupID !== 3) {
+                        out += '<button class="send" onclick="send_win_show(' + data[key]['id'] + ')">Отправить</button>';
+                    }
+                    out += '</item>';
                 }
                 $('#Basket').html(out);
                 delete_gift_from_main_list();
@@ -180,83 +254,102 @@
     }
 
     function add_gift() {
-        let name = document.getElementById('nm').value;
-        let image = document.getElementById('img').value;
-        let title = document.getElementById('ttl').value;
+        if (GroupID === 1) {
+            let name = document.getElementById('nm').value;
+            let image = document.getElementById('img').value;
+            let title = document.getElementById('ttl').value;
 
-        (async () => {
-            let response = await fetch('http://127.0.0.1:5000/addnewpresent', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    'name': name,
-                    'title': title,
-                    'image': image,
-                }),
-            });
-            let answer = await response.json();
-            let get_answer = JSON.parse(JSON.stringify(answer));
-            alert(get_answer['answer']);
-            add_win_hide();
-            create_present_list();
-        })();
+            (async () => {
+                let response = await fetch('http://127.0.0.1:5000/addnewpresent', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        'name': name,
+                        'title': title,
+                        'image': image,
+                    }),
+                });
+                let answer = await response.json();
+                let get_answer = JSON.parse(JSON.stringify(answer));
+                alert(get_answer['answer']);
+                add_win_hide();
+                create_present_list();
+            })();
+        } else {
+            alert('Эта функция предназначена только для администратора!')
+        }
     }
 
     function refresh_user_list() {
         // updates the list of users by group
-        (async () => {
-            let current_forum = window.location.hostname;
-            let forum_groups = '1'
-            let req = 'https://' + current_forum + '/api.php?method=users.get&group_id=' + forum_groups + '&limit=500'
-            let response = await fetch('http://127.0.0.1:5000/addallusers', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    'url': req,
-                }),
-            });
-            let answer = await response.json();
-            let get_answer = JSON.parse(JSON.stringify(answer));
-            alert(get_answer['answer']);
-        })();
+        if (GroupID === 1) {
+            (async () => {
+                let current_forum = window.location.hostname;
+                let forum_groups = '1'
+                let req = 'https://' + current_forum + '/api.php?method=users.get&group_id=' + forum_groups + '&limit=500'
+                let response = await fetch('http://127.0.0.1:5000/addallusers', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        'url': req,
+                    }),
+                });
+                let answer = await response.json();
+                let get_answer = JSON.parse(JSON.stringify(answer));
+                alert(get_answer['answer']);
+            })();
+        } else {
+            alert('Эта функция предназначена только для администратора!')
+        }
     }
 
-    function add_user_win_show() {
-        // show form
-        document.getElementById('addNewUser').style.display = "block";
+    function reset_limits() {
+        // reset limits
+        if (GroupID === 1) {
+            (async () => {
+                let response = await fetch('http://127.0.0.1:5000/resetlimits', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                let answer = await response.json();
+                let get_answer = JSON.parse(JSON.stringify(answer));
+                alert(get_answer['answer']);
+            })();
+        } else {
+            alert('Эта функция предназначена только для администратора!')
+        }
     }
 
-    function add_new_user() {
-        let name = document.getElementById('fnm').value;
-        let id = document.getElementById('fid').value;
+    function del_user() {
+        // add del user from db
+        if (GroupID === 1) {
 
-        (async () => {
-            let response = await fetch('http://127.0.0.1:5000/addnewuser', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    'forum_name': name,
-                    'id': +id,
-                }),
-            });
-            let answer = await response.json();
-            let get_answer = JSON.parse(JSON.stringify(answer));
-            alert(get_answer['answer']);
-            add_user_win_hide();
-        })();
-    }
+            let id = document.getElementById('del_fid').value;
 
-    function add_user_win_hide() {
-        // close form
-        $('#form > dfn').remove();
-        document.getElementById('addNewUser').style.display = "none";
-        $('#popupUserAdd> #form')[0].reset();
+            (async () => {
+                let response = await fetch('http://127.0.0.1:5000/deleteuser', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        'forum_id': +id,
+                    }),
+                });
+                let answer = await response.json();
+                let get_answer = JSON.parse(JSON.stringify(answer));
+                alert(get_answer['answer']);
+                del_user_win_hide();
+            })();
+        } else {
+            alert('Эта функция предназначена только для администратора!')
+        }
     }
 
     create_present_list();
@@ -301,6 +394,7 @@
         z-index: 1000;
         color: #c6b89b;
         cursor: default;
+        width: 15em;
     }
 
     dfn img {
@@ -330,7 +424,7 @@
     }
 
     /*Form*/
-    #sendGift, #addNewGift, #addNewUser {
+    #sendGift, #addNewGift, #addNewUser, #delUser {
         width: 100%;
         height: 100%;
         opacity: .95;
@@ -350,7 +444,7 @@
         cursor: pointer
     }
 
-    div#popupGift, div#popupAdd, div#popupUserAdd {
+    div#popupGift, div#popupAdd, div#popupUserAdd, div#popupUserDel {
         position: absolute;
         left: 50%;
         top: 17%;
@@ -363,20 +457,20 @@
         text-transform: uppercase;
         font-size: 13px;
         font-weight: bold;
-        background: #ccc;
+        background: #c2b499;
     }
 
     #pun-pages form {
         max-width: 300px;
         min-width: 250px;
         padding: 10px 50px;
-        border: 2px solid gray;
+        border: 2px solid #c2b499;
         border-radius: 10px;
-        background-color: #fff
+        background: url(https://forumstatic.ru/files/001a/e7/ed/39553.jpg) top right;
     }
 
     #popupGift #msg {
-        font-size: 14px;
+        font-size: 12px;
         margin-bottom: 5px;
         margin-top: 18px;
     }
@@ -386,7 +480,7 @@
     }
 
     #popupAdd #nm {
-        font-size: 14px;
+        font-size: 12px;
         padding: 5px;
         width: 96%;
         margin-bottom: 5px;
@@ -395,7 +489,7 @@
 
     #popupAdd #img {
         height: 36px;
-        font-size: 14px;
+        font-size: 12px;
         padding: 5px;
         width: 96%;
         margin-bottom: 5px;
@@ -403,7 +497,7 @@
     }
 
     #popupAdd #ttl {
-        font-size: 14px;
+        font-size: 12px;
         padding: 5px;
         width: 96%;
         margin-bottom: 5px;
@@ -423,21 +517,19 @@
 
     #pun-pages input[type=text] {
         width: 82%;
-        padding: 10px;
         margin-top: 30px;
         border: 1px solid #ccc;
-        padding-left: 40px;
+        padding: 10px 10px 10px 40px;
         font-size: 16px;
     }
 
     #pun-pages textarea {
         width: 82%;
         height: 95px;
-        padding: 10px;
         resize: none;
         margin-top: 30px;
         border: 1px solid #ccc;
-        padding-left: 40px;
+        padding: 10px 10px 10px 40px;
         font-size: 16px;
         margin-bottom: 30px;
         min-width: 246px;
@@ -462,17 +554,23 @@
         left: -3px;
     }
 
-    #NewPresent, #RefreshUserList, #AddUserToList {
+    #NewPresent, #RefreshUserList, #AddUserToList, #DelUserFromList, #ResetLimits {
         position: relative;
         padding-right: 10px;
         cursor: pointer;
         float: left;
     }
 
+    .gid1 #AdminMenu {
+        display: block;
+    }
+
     #AdminMenu {
         position: relative;
-        height: 13px;
+        height: 10px;
         padding: 5px;
+        font-size: 11px;
+        display: none;
     }
 
     #userList {
@@ -482,12 +580,20 @@
         font-size: 12px;
     }
 
-    #pun-pages #fid, #pun-pages #fnm {
+    #pun-pages #fid, #pun-pages #fnm, #pun-pages #del_fid {
         height: 20px;
         margin-bottom: 5px;
-        font-size: 14px;
+        font-size: 12px;
     }
+
     #pun-pages #fnm {
         margin-top: 5px;
+    }
+
+    p#info {
+        text-align: center;
+        font-style: italic;
+        padding: 0px;
+        margin: 8px 8px -22px;
     }
 </style>

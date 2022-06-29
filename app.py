@@ -162,7 +162,23 @@ def get_all_users():
         return request_result
 
 
+@app.route('/resetlimits', methods=["POST"])
+@cross_origin()
+def reset_limits_by_hand():
+    """
+    Сбрасываем лимиты вручную, добавляет 5 попыток дарения подарков всем юзерам
+    :return:
+    """
+    if request.method == 'POST':
+        request_result = UpdateTables.update_limits_everyday()
+        return request_result
+
+
 def reset_limits():
+    """
+    Ежесуточный сброс лимитов по таймеру
+    :return:
+    """
     print('Scheduler alive')
     UpdateTables.update_limits_everyday()
 
