@@ -13,7 +13,8 @@
             });
             /// Необходимо доделать
             let result = await response.json();
-            $('h1 span').html('Страница подарков' + result.users[0]);
+            let f_name = result.response['users'][0].username;
+            $('h1 span').html('Страница подарков игрока ' + f_name);
         })();
     }
 
@@ -116,7 +117,7 @@
         z-index: 1000;
         color: #c6b89b;
         cursor: default;
-        width: 15em;
+        width: auto;
     }
 
     dfn img {
