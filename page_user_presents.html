@@ -40,20 +40,23 @@
     function delete_gift_from_user_list() {
         // delete a gift
         $('strong.del').click(function () {
-            let deletedID = $(this).attr('data-uid');
-            (async () => {
-                let response = await fetch('http://127.0.0.1:5000/deletemadepresent', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({'id': deletedID}),
-                });
-                let answer = await response.json();
-                let get_answer = JSON.parse(JSON.stringify(answer));
-                $(this).parent().remove();
-                alert(get_answer['answer']);
-            })();
+            let is_delete_process = confirm("Вы точно хотите удалить подарок со страницы этого пользователя?");
+            if (is_delete_process) {
+                let deletedID = $(this).attr('data-uid');
+                (async () => {
+                    let response = await fetch('http://127.0.0.1:5000/deletemadepresent', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({'id': deletedID}),
+                    });
+                    let answer = await response.json();
+                    let get_answer = JSON.parse(JSON.stringify(answer));
+                    $(this).parent().remove();
+                    alert(get_answer['answer']);
+                })();
+            }
         });
     }
 
@@ -136,5 +139,17 @@
         font-size: 14px;
         cursor: pointer;
     }
+
+    span.date {
+        font-size: 10px;
+        color: #bbbab9;
+    }
+
+    span.from {
+        font-style: italic;
+        font-weight: bold;
+        font-size: 10px;
+    }
+
 
 </style>

@@ -1,10 +1,28 @@
 <div id="Basket"></div>
 
 <script type="text/javascript">
+
+    function header_by_name(otherUID) {
+        let req = 'https://' + window.location.hostname + '/api.php?method=users.get&user_id=' + otherUID + '&limit=1';
+        (async () => {
+            let response = await fetch(req, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            /// Необходимо доделать
+            let result = await response.json();
+            $('h1 span').html('Страница подарков' + result.users[0]);
+        })();
+    }
+
     function create_present_list() {
         // get user id
         let params = (new URL(document.location)).searchParams;
         let otherUID = params.get("id");
+
+        header_by_name(otherUID);
 
         // create user presents list
         (async () => {
@@ -45,20 +63,23 @@
     function delete_gift_from_user_list() {
         // delete a gift
         $('strong.del').click(function () {
-            let deletedID = $(this).attr('data-uid');
-            (async () => {
-                let response = await fetch('http://127.0.0.1:5000/deletemadepresent', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({'id': deletedID}),
-                });
-                let answer = await response.json();
-                let get_answer = JSON.parse(JSON.stringify(answer));
-                $(this).parent().remove();
-                alert(get_answer['answer']);
-            })();
+            let is_delete_process = confirm("Вы точно хотите удалить подарок со страницы этого пользователя?");
+            if (is_delete_process) {
+                let deletedID = $(this).attr('data-uid');
+                (async () => {
+                    let response = await fetch('http://127.0.0.1:5000/deletemadepresent', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({'id': deletedID}),
+                    });
+                    let answer = await response.json();
+                    let get_answer = JSON.parse(JSON.stringify(answer));
+                    $(this).parent().remove();
+                    alert(get_answer['answer']);
+                })();
+            }
         });
     }
 
@@ -141,5 +162,17 @@
         font-size: 14px;
         cursor: pointer;
     }
+
+    span.date {
+        font-size: 10px;
+        color: #bbbab9;
+    }
+
+    span.from {
+        font-style: italic;
+        font-weight: bold;
+        font-size: 10px;
+    }
+
 
 </style>

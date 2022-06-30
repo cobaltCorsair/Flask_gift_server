@@ -13,8 +13,9 @@
     <div id="popupGift">
         <!--  Form -->
         <form action="" id="form" method="post" name="form" onsubmit="return false;">
-            <img id="close" src="x" onclick="send_win_hide()">
+            <div class="cl-btn-7" id="close" onclick="send_win_hide()"></div>
             <header>Отправить подарок</header>
+            <p id="adr">Выбрать адресата из списка:</p>
             <select id="userList">
             </select>
             <script type="text/javascript">
@@ -48,11 +49,12 @@
     <div id="popupAdd">
         <!--  Form -->
         <form action="" id="form" method="post" name="form" onsubmit="return false;">
-            <img id="close" src="x" onclick="add_win_hide()">
+            <div class="cl-btn-7" id="close" onclick="add_win_hide()"></div>
             <header>Добавить новый подарок</header>
             <p id="info">Добавляет новый подарок в систему подарков</p>
             <textarea id="nm" name="name" placeholder="Название подарка"></textarea>
-            <textarea id="img" name="image" placeholder="URL картинки подарка, строго 60х60"></textarea>
+            <textarea id="img" name="image"
+                      placeholder="URL картинки подарка, 60х60 или больше (квадратной формы)"></textarea>
             <textarea id="ttl" name="title" placeholder="Краткое описание подарка"></textarea>
             <button class='submit' onclick="add_gift(); return false;">Отправить</button>
         </form>
@@ -65,7 +67,7 @@
     <div id="popupUserAdd">
         <!--  Form -->
         <form action="" id="form" method="post" name="form" onsubmit="return false;">
-            <img id="close" src="x" onclick="add_user_win_hide()">
+            <div class="cl-btn-7" id="close" onclick="add_user_win_hide()"></div>
             <header>Добавить нового пользователя</header>
             <p id="info">Добавляет пользователя в систему подарков</p>
             <textarea id="fid" name="forum_id" placeholder="ID пользователя"></textarea>
@@ -81,7 +83,7 @@
     <div id="popupUserDel">
         <!--  Form -->
         <form action="" id="form" method="post" name="form" onsubmit="return false;">
-            <img id="close" src="x" onclick="del_user_win_hide()">
+            <div class="cl-btn-7" id="close" onclick="del_user_win_hide()"></div>
             <header>Удалить пользователя</header>
             <p id="info">Удаляет пользователя из системы подарков</p>
             <textarea id="del_fid" name="forum_id" placeholder="ID пользователя"></textarea>
@@ -201,20 +203,23 @@
     function delete_gift_from_main_list() {
         // delete a gift
         $('strong.del').click(function () {
-            let deletedID = $(this).attr('data-uid');
-            (async () => {
-                let response = await fetch('http://127.0.0.1:5000/deletepresent', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({'id': deletedID}),
-                });
-                let answer = await response.json();
-                let get_answer = JSON.parse(JSON.stringify(answer));
-                $(this).parent().remove();
-                alert(get_answer['answer']);
-            })();
+            let is_delete_process = confirm("Вы точно хотите удалить подарок? Если этот подарок уже был подарен пользователями, он удалится из их списков полученных подарков.");
+            if (is_delete_process) {
+                let deletedID = $(this).attr('data-uid');
+                (async () => {
+                    let response = await fetch('http://127.0.0.1:5000/deletepresent', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({'id': deletedID}),
+                    });
+                    let answer = await response.json();
+                    let get_answer = JSON.parse(JSON.stringify(answer));
+                    $(this).parent().remove();
+                    alert(get_answer['answer']);
+                })();
+            }
         });
     }
 
@@ -356,7 +361,7 @@
 </script>
 
 <style>
-    /*Present*/
+    /*Presents*/
     #pun-pages .main .container {
         overflow: visible;
     }
@@ -409,7 +414,8 @@
 
     dfn > span span.desc {
         display: block;
-        margin-bottom: .5em;
+        margin-bottom: 0.5em;
+        color: #bbbab9;
     }
 
     item {
@@ -421,13 +427,25 @@
         font-size: 12px;
         width: 70px;
         padding: 0;
+        background-color: #1e1e1e;
+        color: #b7a98f;
+        cursor: pointer;
+    }
+
+    #pun-pages p#adr {
+        margin: 0;
+        position: absolute;
+        top: 56px;
+        left: 126px;
+        color: #baad93;
+        font-style: italic;
     }
 
     /*Form*/
     #sendGift, #addNewGift, #addNewUser, #delUser {
         width: 100%;
         height: 100%;
-        opacity: .95;
+        opacity: .98;
         top: 0;
         left: 0;
         display: none;
@@ -437,12 +455,6 @@
         z-index: 10000
     }
 
-    img#close {
-        position: absolute;
-        right: -14px;
-        top: -14px;
-        cursor: pointer
-    }
 
     div#popupGift, div#popupAdd, div#popupUserAdd, div#popupUserDel {
         position: absolute;
@@ -455,9 +467,11 @@
         text-align: center;
         font-style: normal;
         text-transform: uppercase;
-        font-size: 13px;
+        font-size: 12px;
         font-weight: bold;
         background: #c2b499;
+        font-family: verdana, serif;
+        border-radius: 5px;
     }
 
     #pun-pages form {
@@ -505,10 +519,14 @@
     }
 
     button.submit {
-        margin-left: 109px;
+        margin-left: 90px;
         margin-top: 5px;
         padding: 5px;
-        width: 80px;
+        width: 114px;
+        background-color: #020202;
+        color: #c8bea7;
+        border: 1px solid;
+        cursor: pointer;
     }
 
     #pun-pages p {
@@ -554,25 +572,6 @@
         left: -3px;
     }
 
-    #NewPresent, #RefreshUserList, #AddUserToList, #DelUserFromList, #ResetLimits {
-        position: relative;
-        padding-right: 10px;
-        cursor: pointer;
-        float: left;
-    }
-
-    .gid1 #AdminMenu {
-        display: block;
-    }
-
-    #AdminMenu {
-        position: relative;
-        height: 10px;
-        padding: 5px;
-        font-size: 11px;
-        display: none;
-    }
-
     #userList {
         width: 224px;
         height: 21px;
@@ -593,7 +592,86 @@
     p#info {
         text-align: center;
         font-style: italic;
-        padding: 0px;
+        padding: 0;
         margin: 8px 8px -22px;
+        color: #bbbab9;
     }
+
+    /*Admin options*/
+    #NewPresent, #RefreshUserList, #AddUserToList, #DelUserFromList, #ResetLimits {
+        position: relative;
+        cursor: pointer;
+        float: left;
+        border: 1px solid #968055;
+        background: #000;
+        color: #c3ba9b;
+        margin: 3px;
+        left: 17px;
+        padding: 3px 5px;
+    }
+
+    .gid1 #AdminMenu {
+        display: block;
+    }
+
+    #AdminMenu {
+        position: relative;
+        height: 10px;
+        padding: 5px;
+        font-size: 11px;
+        display: none;
+    }
+
+    /*Close button*/
+    .cl-btn-7 {
+        width: 40px;
+        height: 40px;
+        border-radius: 40px;
+        position: absolute;
+        z-index: 1;
+        margin: 20px auto;
+        cursor: pointer;
+        right: -14px;
+        top: -37px;
+    }
+
+    .cl-btn-7:before {
+        content: '+';
+        color: #c7bda7;
+        position: absolute;
+        z-index: 2;
+        transform: rotate(45deg);
+        font-size: 50px;
+        line-height: 1;
+        top: -7px;
+        left: 3px;
+        transition: all 0.3s cubic-bezier(0.77, 0, 0.2, 0.85);
+    }
+
+    .cl-btn-7:after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 100%;
+        background: #1e1e1f;
+        z-index: 1;
+        transition: all 0.3s cubic-bezier(0.77, 0, 0.2, 0.85);
+        transform: scale(0.01);
+        border: 2px solid #c7bea6;
+    }
+
+    .cl-btn-7:hover:after {
+        transform: scale(1);
+        top: -2px;
+        left: -1px;
+    }
+
+    .cl-btn-7:hover:before {
+        transform: scale(0.8) rotate(45deg);
+        color: #90908f;
+    }
+
 </style>
