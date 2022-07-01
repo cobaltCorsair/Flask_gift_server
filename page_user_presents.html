@@ -1,10 +1,12 @@
 <div id="Basket"></div>
 
 <script type="text/javascript">
+    const SERVER_PATH = 'http://127.0.0.1:5000/'
+
     function create_present_list() {
         // create user presents list
         (async () => {
-            let response = await fetch('http://127.0.0.1:5000/getuserpresents', {
+            let response = await fetch(SERVER_PATH +'getuserpresents', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -44,7 +46,7 @@
             if (is_delete_process) {
                 let deletedID = $(this).attr('data-uid');
                 (async () => {
-                    let response = await fetch('http://127.0.0.1:5000/deletemadepresent', {
+                    let response = await fetch(SERVER_PATH +'deletemadepresent', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
