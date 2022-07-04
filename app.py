@@ -183,7 +183,7 @@ def reset_limits():
     UpdateTables.update_limits_everyday()
 
 
-sheduler = BackgroundScheduler(daemon=True)
+sheduler = BackgroundScheduler({'apscheduler.timezone': 'Europe/Moscow'})
 sheduler.add_job(reset_limits, 'interval', hours=24)
 sheduler.start()
 
