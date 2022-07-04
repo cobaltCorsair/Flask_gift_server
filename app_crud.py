@@ -204,4 +204,3 @@ class ViewResults:
         all_results = {all_users.index(i): i.serialize() for i in all_users}
         return all_results
 
-# print(db.session.query(Username).all())

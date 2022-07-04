@@ -13,11 +13,18 @@ if 'sqlite' in app.config['SQLALCHEMY_DATABASE_URI']:
         """Включаем поддержку внешних ключей"""
         dbapi_con.execute('pragma foreign_keys=ON')
 
+
     with app.app_context():
         from sqlalchemy import event
+
         event.listen(db.engine, 'connect', _fk_pragma_on_connect)
 
 from app_crud import UpdateTables, ViewResults
+
+
+@app.route('/')
+def start_app():
+    return 'Сервер успешно запущен!'
 
 
 @app.route('/addnewuser', methods=["POST"])
@@ -188,4 +195,4 @@ sheduler.add_job(reset_limits, 'interval', hours=24)
 sheduler.start()
 
 if __name__ == "__main__":
-    app.run('0.0.0.0', 5000)  # запустим сервер на 5000 порту
+    app.run()  # запустим сервер
