@@ -10,6 +10,7 @@
 
 <script type="text/javascript">
     const SERVER_PATH = 'http://127.0.0.1:5000/'
+    const GROUPS_FOR_LIST = '1,2,3'
 </script>
 
 <div id="sendGift">
@@ -295,9 +296,7 @@
         // updates the list of users by group
         if (GroupID === 1) {
             (async () => {
-                let current_forum = window.location.hostname;
-                let forum_groups = '1'
-                let req = 'https://' + current_forum + '/api.php?method=users.get&group_id=' + forum_groups + '&limit=500'
+                let req = 'https://' + window.location.hostname + '/api.php?method=users.get&group_id=' + GROUPS_FOR_LIST + '&limit=500'
                 let response = await fetch(SERVER_PATH +'addallusers', {
                     method: 'POST',
                     headers: {
