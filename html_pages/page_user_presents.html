@@ -29,7 +29,7 @@
                     out += '<span class="date">' + data[key]['date'] + '</span>';
                     out += '<span class="from">' + 'от: ' + data[key]['forum_name'] + '</span>';
                     out += '<span class="comment">' + data[key]['comment'] + '</span>';
-                    out += '</span></span><img src="' + data[key]['image'] + '" width="60" height="60" /></dfn></item>';
+                    out += '</span></span><img src="' + data[key]['image'] + '" width="50" height="50" /></dfn></item>';
                 }
                 $('#Basket').html(out);
                 delete_gift_from_user_list();
@@ -74,8 +74,8 @@
     dfn {
         display: inline-block;
         position: relative;
-        width: 60px;
-        height: 60px;
+        width: 50px;
+        height: 50px;
         right: -1px;
         padding: 5px;
     }
@@ -152,6 +152,5 @@
         font-weight: bold;
         font-size: 10px;
     }
-
 
 </style>

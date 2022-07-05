@@ -59,7 +59,7 @@
             <p id="info">Добавляет новый подарок в систему подарков</p>
             <textarea id="nm" name="name" placeholder="Название подарка"></textarea>
             <textarea id="img" name="image"
-                      placeholder="URL картинки подарка, 60х60 или больше (квадратной формы)"></textarea>
+                      placeholder="URL картинки подарка, 50х50 или больше (квадратной формы)"></textarea>
             <textarea id="ttl" name="title" placeholder="Краткое описание подарка"></textarea>
             <button class='submit' onclick="add_gift(); return false;">Отправить</button>
         </form>
@@ -249,7 +249,7 @@
                     out += '<dfn id="' + data[key]['id'] + '"><span>';
                     out += '<span class="name">' + data[key]['name'] + '</strong></span>';
                     out += '<span class="desc">' + data[key]['title'] + '</span>';
-                    out += '</span></span><img src="' + data[key]['image'] + '" width="60" height="60" /></dfn>';
+                    out += '</span></span><img src="' + data[key]['image'] + '" width="50" height="50" /></dfn>';
                     if (GroupID !== 3) {
                         out += '<button class="send" onclick="send_win_show(' + data[key]['id'] + ')">Отправить</button>';
                     }
@@ -372,8 +372,8 @@
     dfn {
         display: inline-block;
         position: relative;
-        width: 60px;
-        height: 60px;
+        width: 50px;
+        height: 50px;
         right: -1px;
         padding: 5px;
     }
