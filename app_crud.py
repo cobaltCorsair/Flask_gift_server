@@ -130,7 +130,6 @@ class UpdateTables:
         resp = requests.get(url)
         answer = resp.json()
         for key in answer['response']['users']:
-            print(key['username'], key['user_id'])
             UpdateTables.add_new_user(key['username'], key['user_id'])
         return {'answer': 'Все записи добавлены'}
 

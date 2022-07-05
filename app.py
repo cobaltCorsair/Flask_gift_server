@@ -186,7 +186,6 @@ def reset_limits():
     Ежесуточный сброс лимитов по таймеру
     :return:
     """
-    print('Scheduler alive')
     UpdateTables.update_limits_everyday()
 
 
