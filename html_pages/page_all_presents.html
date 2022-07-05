@@ -25,7 +25,7 @@
             </select>
             <script type="text/javascript">
                 (async () => {
-                    let response = await fetch(SERVER_PATH +'getallusers', {
+                    let response = await fetch(SERVER_PATH + 'getallusers', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -157,7 +157,7 @@
             let id = document.getElementById('fid').value;
 
             (async () => {
-                let response = await fetch(SERVER_PATH +'addnewuser', {
+                let response = await fetch(SERVER_PATH + 'addnewuser', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -186,7 +186,7 @@
         console.log(user_id, gift_id, message);
 
         (async () => {
-            let response = await fetch(SERVER_PATH +'makepresent', {
+            let response = await fetch(SERVER_PATH + 'makepresent', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -212,7 +212,7 @@
             if (is_delete_process) {
                 let deletedID = $(this).attr('data-uid');
                 (async () => {
-                    let response = await fetch(SERVER_PATH +'deletepresent', {
+                    let response = await fetch(SERVER_PATH + 'deletepresent', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -231,7 +231,7 @@
     function create_present_list() {
         // create presents list on page
         (async () => {
-            let response = await fetch(SERVER_PATH +'getallpresents', {
+            let response = await fetch(SERVER_PATH + 'getallpresents', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -270,7 +270,7 @@
             let title = document.getElementById('ttl').value;
 
             (async () => {
-                let response = await fetch(SERVER_PATH +'addnewpresent', {
+                let response = await fetch(SERVER_PATH + 'addnewpresent', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -297,7 +297,7 @@
         if (GroupID === 1) {
             (async () => {
                 let req = 'https://' + window.location.hostname + '/api.php?method=users.get&group_id=' + GROUPS_FOR_LIST + '&limit=500'
-                let response = await fetch(SERVER_PATH +'addallusers', {
+                let response = await fetch(SERVER_PATH + 'addallusers', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -319,7 +319,7 @@
         // reset limits
         if (GroupID === 1) {
             (async () => {
-                let response = await fetch(SERVER_PATH +'resetlimits', {
+                let response = await fetch(SERVER_PATH + 'resetlimits', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -341,7 +341,7 @@
             let id = document.getElementById('del_fid').value;
 
             (async () => {
-                let response = await fetch(SERVER_PATH +'deleteuser', {
+                let response = await fetch(SERVER_PATH + 'deleteuser', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -550,10 +550,10 @@
         resize: none;
         margin-top: 30px;
         border: 1px solid #ccc;
-        padding: 10px 10px 10px 40px;
+        padding: 10px 10px 10px 10px;
         font-size: 16px;
         margin-bottom: 30px;
-        min-width: 246px;
+        min-width: 275px;
     }
 
     #pun-pages #submit {
