@@ -1,7 +1,7 @@
 <div id="Basket"></div>
 
 <script type="text/javascript">
-    const SERVER_PATH = 'http://127.0.0.1:5000/'
+    const SERVER_PATH = 'https://cobaltcorsair.ru/'; // адрес сервера
 
     function header_by_name(otherUID) {
         let req = 'https://' + window.location.hostname + '/api.php?method=users.get&user_id=' + otherUID + '&limit=1';
@@ -12,7 +12,6 @@
                     'Content-Type': 'application/json'
                 }
             });
-            /// Необходимо доделать
             let result = await response.json();
             let f_name = result.response['users'][0].username;
             $('h1 span').html('Страница подарков игрока ' + f_name);
