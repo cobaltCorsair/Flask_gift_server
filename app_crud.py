@@ -84,9 +84,9 @@ class UpdateTables:
                 db.session.add(present)
                 UpdateTables.reduction_limit(sender)
                 db.session.commit()
-                return {'answer': 'Добавлено в базу данных'}
+                return {'answer': 'Подарок успешно отправлен'}
             except IntegrityError:
-                return {'answer': 'Вы пытаетесь добавить несуществующие в базе данных параметры'}
+                return {'answer': 'Вы пытаетесь использовать несуществующие в базе данных параметры'}
         else:
             return {'answer': 'Вы превысили суточный лимит отправки подарков'}
 
