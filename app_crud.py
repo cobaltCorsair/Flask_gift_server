@@ -29,7 +29,7 @@ class UpdateTables:
                     UpdateTables.limit_for_user(user_id)
                     # сохраняем изменения
                     db.session.commit()
-                    return {'answer': 'Добавлено в бд'}
+                    return {'answer': 'Добавлено в базу данных'}
                 else:
                     return {'answer': 'Такая запись уже есть'}
             except IntegrityError:
@@ -46,7 +46,7 @@ class UpdateTables:
             db.session.commit()
             return {'answer': 'Пользователь удалён'}
         else:
-            return {'answer': 'Запись отсутствует в бд'}
+            return {'answer': 'Запись отсутствует в базе данных'}
 
     @staticmethod
     def add_new_present(present_name, present_title, image_url):
@@ -61,7 +61,7 @@ class UpdateTables:
             present = Presents(name=present_name, title=present_title, image=image_url)
             db.session.add(present)
             db.session.commit()
-            return {'answer': 'Добавлено в бд'}
+            return {'answer': 'Добавлено в базу данных'}
         else:
             return {'answer': 'Заполните необходимые поля!'}
 
@@ -84,7 +84,7 @@ class UpdateTables:
                 db.session.add(present)
                 UpdateTables.reduction_limit(sender)
                 db.session.commit()
-                return {'answer': 'Добавлено в бд'}
+                return {'answer': 'Добавлено в базу данных'}
             except IntegrityError:
                 return {'answer': 'Вы пытаетесь добавить несуществующие в базе данных параметры'}
         else:
@@ -185,7 +185,7 @@ class ViewResults:
         """
         all_presents = db.session.query(Presents).all()
         if not all_presents:
-            return {'answer': 'Подарки еще не были добавлены'}
+            return {'answer': 'Подарки ещё не были добавлены'}
 
         all_results = {all_presents.index(i): i.serialize() for i in all_presents}
         return all_results
@@ -198,7 +198,7 @@ class ViewResults:
         """
         all_users = db.session.query(Username).all()
         if not all_users:
-            return {'answer': 'Пользователей еще нет'}
+            return {'answer': 'Пользователей ещё нет'}
 
         all_results = {all_users.index(i): i.serialize() for i in all_users}
         return all_results
