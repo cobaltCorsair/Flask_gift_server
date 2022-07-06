@@ -130,8 +130,8 @@ class UpdateTables:
         :param id_present: Идентификатор подарка
         :return: Сообщение об изменении/отсутствии такого подарка
         """
-        to_delete_made_present = db.session.query(UserPresents).filter(UserPresents.id == id_present).first()
-        if to_delete_made_present is not None:
+        to_edit_present = db.session.query(Presents).filter(Presents.id == id_present).first()
+        if to_edit_present is not None:
             db.session.update({'name': name, 'title': title, 'image': image})
             db.session.commit()
             return {'answer': 'Подарок успешно изменён'}
