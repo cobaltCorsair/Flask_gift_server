@@ -219,8 +219,8 @@ class ViewResults:
         if not to_edit_present:
             return {'answer': 'Запись отсутствует в базе данных'}
         else:
-            all_results = {to_edit_present.index(i): i.serialize() for i in to_edit_present}
-            return all_results
+            result = to_edit_present.serialize()
+            return result
 
     @staticmethod
     def get_all_users():

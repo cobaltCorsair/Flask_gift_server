@@ -177,6 +177,21 @@
             // insert id to form
             let editedID = $(this).attr('data-uid');
             $('#p_id').val(editedID);
+            (async () => {
+                let response = await fetch(SERVER_PATH + 'geteditpresent', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({'id': editedID}),
+                });
+                let answer = await response.json();
+                let get_answer = JSON.parse(JSON.stringify(answer));
+                // insert data in form
+                $('#popupEdit #nm').val(get_answer['name']);
+                $('#popupEdit #img').val(get_answer['image']);
+                $('#popupEdit #ttl').val(get_answer['title']);
+            })();
         });
     }
 
@@ -188,6 +203,34 @@
 
     function edit_gift() {
         // edit gift
+        if (GroupID === 1) {
+            let pres_id = $('#popupEdit #p_id').value;
+            let name = $('#popupEdit #nm').value;
+            let image = $('#popupEdit #img').value;
+            let title = $('#popupEdit #ttl').value;
+
+            (async () => {
+                let response = await fetch(SERVER_PATH + 'editpresent', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        'id': pres_id,
+                        'name': name,
+                        'title': title,
+                        'image': image
+                    }),
+                });
+                let answer = await response.json();
+                let get_answer = JSON.parse(JSON.stringify(answer));
+                alert(get_answer['answer']);
+                edit_win_hide();
+                create_present_list();
+            })();
+        } else {
+            alert('Эта функция предназначена только для администратора!')
+        }
     }
 
     function add_new_user() {
@@ -307,9 +350,9 @@
 
     function add_gift() {
         if (GroupID === 1) {
-            let name = document.getElementById('nm').value;
-            let image = document.getElementById('img').value;
-            let title = document.getElementById('ttl').value;
+            let name = $('#popupEdit #nm').value;
+            let image = $('#popupEdit #img').value;
+            let title = $('#popupEdit #ttl').value;
 
             (async () => {
                 let response = await fetch(SERVER_PATH + 'addnewpresent', {
@@ -320,7 +363,7 @@
                     body: JSON.stringify({
                         'name': name,
                         'title': title,
-                        'image': image,
+                        'image': image
                     }),
                 });
                 let answer = await response.json();
