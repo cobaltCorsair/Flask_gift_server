@@ -67,6 +67,26 @@
     <!-- Ends Here -->
 </div>
 
+
+<div id="editGift">
+    <!-- Starts Here -->
+    <div id="popupEdit">
+        <!--  Form -->
+        <form action="" id="form" method="post" name="form" onsubmit="return false;">
+            <div class="cl-btn-7" id="close" onclick="edit_win_hide()"></div>
+            <header>Редактировать подарок</header>
+            <p id="info">Изменяет подарок в системе подарков</p>
+            <input type=hidden id="p_id" name="pres_id" value="">
+            <textarea id="nm" name="name" placeholder="Название подарка"></textarea>
+            <textarea id="img" name="image"
+                      placeholder="URL картинки подарка, 50х50 или больше (квадратной формы)"></textarea>
+            <textarea id="ttl" name="title" placeholder="Краткое описание подарка"></textarea>
+            <button class='submit' onclick="edit_gift(); return false;">Отправить</button>
+        </form>
+    </div>
+    <!-- Ends Here -->
+</div>
+
 <div id="addNewUser">
     <!-- Starts Here -->
     <div id="popupUserAdd">
@@ -148,6 +168,26 @@
         document.getElementById('delUser').style.display = "none";
         $('#popupUserDel> #form')[0].reset();
 
+    }
+
+    function edit_win_show() {
+        $('strong.edit').click(function () {
+            // show form
+            document.getElementById('editGift').style.display = "block";
+            // insert id to form
+            let editedID = $(this).attr('data-uid');
+            $('#p_id').val(editedID);
+        });
+    }
+
+    function edit_win_hide() {
+        // close form
+        document.getElementById('editGift').style.display = "none";
+        $('#popupEdit > #form')[0].reset();
+    }
+
+    function edit_gift() {
+        // edit gift
     }
 
     function add_new_user() {
@@ -258,6 +298,7 @@
                 }
                 $('#Basket').html(out);
                 delete_gift_from_main_list();
+                edit_win_show();
             } else {
                 $('#Basket').html(data['answer']);
             }
@@ -457,7 +498,7 @@
     }
 
     /*Form*/
-    #sendGift, #addNewGift, #addNewUser, #delUser {
+    #sendGift, #addNewGift, #addNewUser, #delUser, #editGift {
         width: 100%;
         height: 100%;
         opacity: .98;
@@ -471,7 +512,7 @@
     }
 
 
-    div#popupGift, div#popupAdd, div#popupUserAdd, div#popupUserDel {
+    div#popupGift, div#popupAdd, div#popupUserAdd, div#popupUserDel, div#popupEdit {
         position: absolute;
         left: 50%;
         top: 17%;
@@ -504,11 +545,11 @@
         margin-top: 18px;
     }
 
-    #popupAdd #form {
+    #popupAdd #form, #popupEdit #form {
         width: 300px;
     }
 
-    #popupAdd #nm {
+    #popupAdd #nm, #popupEdit #nm {
         font-size: 12px;
         padding: 5px;
         width: 96%;
@@ -516,7 +557,7 @@
         height: 36px;
     }
 
-    #popupAdd #img {
+    #popupAdd #img, #popupEdit #img {
         height: 36px;
         font-size: 12px;
         padding: 5px;
@@ -525,7 +566,7 @@
         margin-top: 5px;
     }
 
-    #popupAdd #ttl {
+    #popupAdd #ttl, #popupEdit #ttl {
         font-size: 12px;
         padding: 5px;
         width: 96%;
