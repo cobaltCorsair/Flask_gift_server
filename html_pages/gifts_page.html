@@ -204,10 +204,10 @@
     function edit_gift() {
         // edit gift
         if (GroupID === 1) {
-            let pres_id = $('#popupEdit #p_id').value;
-            let name = $('#popupEdit #nm').value;
-            let image = $('#popupEdit #img').value;
-            let title = $('#popupEdit #ttl').value;
+            let pres_id = $('#popupEdit #p_id').val();
+            let name = $('#popupEdit #nm').val();
+            let image = $('#popupEdit #img').val();
+            let title = $('#popupEdit #ttl').val();
 
             (async () => {
                 let response = await fetch(SERVER_PATH + 'editpresent', {
@@ -350,9 +350,9 @@
 
     function add_gift() {
         if (GroupID === 1) {
-            let name = $('#popupEdit #nm').value;
-            let image = $('#popupEdit #img').value;
-            let title = $('#popupEdit #ttl').value;
+            let name = $('#popupEdit #nm').val();
+            let image = $('#popupEdit #img').val();
+            let title = $('#popupEdit #ttl').val();
 
             (async () => {
                 let response = await fetch(SERVER_PATH + 'addnewpresent', {
