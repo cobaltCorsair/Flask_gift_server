@@ -73,6 +73,24 @@ def add_new_present():
         return request_result
 
 
+@app.route('/editpresent', methods=["POST"])
+@cross_origin()
+def edit_present():
+    """
+    Пополняем базу подарков
+    :return:
+    """
+    # добавляем метод записи в бд
+    # data = request.data
+    if request.method == 'POST':
+        id = request.json['id']
+        name = request.json['name']
+        title = request.json['title']
+        image = request.json['image']
+        request_result = UpdateTables.edit_present(id, name, title, image)
+        return request_result
+
+
 @app.route('/makepresent', methods=["POST"])
 @cross_origin()
 def make_present():

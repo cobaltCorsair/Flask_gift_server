@@ -121,6 +121,24 @@ class UpdateTables:
             return {'answer': 'Запись отсутствует в базе данных'}
 
     @staticmethod
+    def edit_present(id_present, name, title, image):
+        """
+        Редактирование уже добавленного в базу подарка
+        :param image: Картинка подарка
+        :param title: Описание подарка
+        :param name: Имя подарка
+        :param id_present: Идентификатор подарка
+        :return: Сообщение об изменении/отсутствии такого подарка
+        """
+        to_delete_made_present = db.session.query(UserPresents).filter(UserPresents.id == id_present).first()
+        if to_delete_made_present is not None:
+            db.session.update({'name': name, 'title': title, 'image': image})
+            db.session.commit()
+            return {'answer': 'Подарок успешно изменён'}
+        else:
+            return {'answer': 'Запись отсутствует в базе данных'}
+
+    @staticmethod
     def add_all_users(url):
         """
         Добавляет всех юзеров разом в систему подарков
