@@ -121,7 +121,7 @@ class UpdateTables:
             return {'answer': 'Запись отсутствует в базе данных'}
 
     @staticmethod
-    def edit_present(id_present, name, title, image):
+    def edit_present(id_present, p_name, p_title, p_image):
         """
         Редактирование уже добавленного в базу подарка
         :param image: Картинка подарка
@@ -130,9 +130,13 @@ class UpdateTables:
         :param id_present: Идентификатор подарка
         :return: Сообщение об изменении/отсутствии такого подарка
         """
-        to_edit_present = db.session.query(Presents).filter(Presents.id == id_present).first()
+        to_edit_present = db.session.query(Presents).filter(Presents.id == id_present)
         if to_edit_present is not None:
-            db.session.update({'name': name, 'title': title, 'image': image})
+            to_edit_present.update({
+                Presents.name: p_name,
+                Presents.title: p_title,
+                Presents.image: p_image,
+            }, synchronize_session=False)
             db.session.commit()
             return {'answer': 'Подарок успешно изменён'}
         else:
