@@ -64,7 +64,6 @@ def add_new_present():
     :return:
     """
     # добавляем метод записи в бд
-    # data = request.data
     if request.method == 'POST':
         name = request.json['name']
         title = request.json['title']
@@ -77,11 +76,10 @@ def add_new_present():
 @cross_origin()
 def edit_present():
     """
-    Пополняем базу подарков
+    Редактируем базу подарков
     :return:
     """
     # добавляем метод записи в бд
-    # data = request.data
     if request.method == 'POST':
         id = request.json['id']
         name = request.json['name']
