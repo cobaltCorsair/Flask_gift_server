@@ -104,6 +104,19 @@ def delete_present():
         return request_result
 
 
+@app.route('/geteditpresent', methods=["POST"])
+@cross_origin()
+def get_edit_present():
+    """
+    Получаем подарок для редактирования
+    :return:
+    """
+    if request.method == 'POST':
+        id = request.json['id']
+        request_result = ViewResults.get_edit_present(id)
+        return request_result
+
+
 @app.route('/deletemadepresent', methods=["POST"])
 @cross_origin()
 def delete_made_present():

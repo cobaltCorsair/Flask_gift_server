@@ -191,6 +191,20 @@ class ViewResults:
         return all_results
 
     @staticmethod
+    def get_edit_present(id_present):
+        """
+        Выдача данных подарка из списка базы данных
+        :param id_present: Идентификатор подарка
+        :return: Сообщение о результате или отсутствии такого подарка
+        """
+        to_edit_present = db.session.query(Presents).filter(Presents.id == id_present).first()
+        if not to_edit_present:
+            return {'answer': 'Запись отсутствует в базе данных'}
+        else:
+            all_results = {to_edit_present.index(i): i.serialize() for i in to_edit_present}
+            return all_results
+
+    @staticmethod
     def get_all_users():
         """
         Получаем всех юзеров системы подарков
