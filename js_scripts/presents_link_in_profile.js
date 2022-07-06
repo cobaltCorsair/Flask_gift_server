@@ -1,19 +1,9 @@
-// добавляем ссылку на страницу с подарками в профиль в постах
+// добавляем ссылку на страницу с подарками в профиль в постах и в просмотре
 const USER_PAGE = 'user_page'; // адрес страницы юзера в админке
-const GIFTS_PAGE = 'gifts_page'; // адрес страницы магазина подарков в админке
-const PROFILE_FIELD_ID = 'fld1'; // id поля профиля, где находится ссылка на страницу подарков
-const GROUPS_FOR_LIST = [1, 2, 5, 9, 11]; // группы, которым можно дарить подарки
+const PROFILE_FIELD_ID = 'fld4'; // id поля профиля, где находится ссылка на страницу подарков
 // чтобы ссылка начала отображаться, в поле должно быть хоть что-нибудь написано
 
 function add_link() {
-    if (GROUPS_FOR_LIST.indexOf(GroupID) !== -1) {
-        // ссылка в главном меню форума на свою страницу
-        let my_page_url = '<li id="myPage"><a href=\"/pages/' + USER_PAGE + '?id=' + UserID + '\"' + 'title=\"Страница подарков\" target=\"_blank\">Мои подарки</a></li>';
-        // ссылка на магазин
-        let gifts_shop_link = '<li id="shopPage"><a href=\"/pages/' + GIFTS_PAGE + '\"' + 'title=\"Галерея подарков\" target=\"_blank\">Галерея подарков</a></li>';
-        $("#navprofile").after(my_page_url);
-        $("#navpm").after(gifts_shop_link);
-    }
     // ссылка в постах
     $("#pun-viewtopic .post .post-author").each(function () {
         let added_id = $(this).closest('.post').attr('data-user-id');
