@@ -17,26 +17,29 @@ class UpdateTables:
         :param person_name: имя пользователя
         :return:
         """
-        if len(person_name) != 0 and ((type(user_id)) == isinstance(user_id, int) and int(user_id) > 0):
-            try:
-                # проверяем, существует ли такой юзер в бд
-                user = db.session.query(Username).filter(Username.forum_id == user_id).all()
-                #  если нет, то записываем
-                if not user:
-                    user = Username(forum_name=person_name, forum_id=user_id)
-                    # чтобы сохранить наш объект user, мы добавляем его в сессию:
-                    db.session.add(user)
-                    UpdateTables.limit_for_user(user_id)
-                    # сохраняем изменения
-                    db.session.commit()
-                    return {'answer': 'Добавлено в базу данных'}
-                else:
-                    return {'answer': 'Такая запись уже есть'}
-            except IntegrityError:
-                # откат в случае ошибки (неуникальный id)
-                db.session.rollback()
-        else:
-            return {'answer': 'Заполните необходимые поля!'}
+        try:
+            if len(person_name) != 0 and int(user_id) > 0:
+                try:
+                    # проверяем, существует ли такой юзер в бд
+                    user = db.session.query(Username).filter(Username.forum_id == user_id).all()
+                    #  если нет, то записываем
+                    if not user:
+                        user = Username(forum_name=person_name, forum_id=user_id)
+                        # чтобы сохранить наш объект user, мы добавляем его в сессию:
+                        db.session.add(user)
+                        UpdateTables.limit_for_user(user_id)
+                        # сохраняем изменения
+                        db.session.commit()
+                        return {'answer': 'Добавлено в базу данных'}
+                    else:
+                        return {'answer': 'Такая запись уже есть'}
+                except IntegrityError:
+                    # откат в случае ошибки (неуникальный id)
+                    db.session.rollback()
+            else:
+                return {'answer': 'Заполните необходимые поля!'}
+        except TypeError:
+            return {'answer': 'Идентификатор должен быть числом, а имя - не пустым!'}
 
     @staticmethod
     def delete_user(user_id):
