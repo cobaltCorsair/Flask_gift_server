@@ -17,7 +17,7 @@ class UpdateTables:
         :param person_name: имя пользователя
         :return:
         """
-        if len(person_name) != 0 and int(user_id) > 0:
+        if len(person_name) != 0 and ((type(user_id)) == isinstance(user_id, int) and int(user_id) > 0):
             try:
                 # проверяем, существует ли такой юзер в бд
                 user = db.session.query(Username).filter(Username.forum_id == user_id).all()
@@ -78,7 +78,8 @@ class UpdateTables:
         get_lim = db.session.query(Limits.limit).filter(Limits.user_forum_id == sender).first()
         if get_lim[0] > 0:
             try:
-                clr_comment = comment.replace("&", "&amp;").replace('"', "&quot;").replace("<", "&lt;").replace(">", "&gt;")
+                clr_comment = comment.replace("&", "&amp;").replace('"', "&quot;").replace("<", "&lt;").replace(">",
+                                                                                                                "&gt;")
                 present = UserPresents(id_user_addressee=addressee, id_user_sender=sender, id_present=id_present,
                                        comment=clr_comment, date=datetime.now())
                 db.session.add(present)
@@ -238,4 +239,3 @@ class ViewResults:
 
         all_results = {all_users.index(i): i.serialize() for i in all_users}
         return all_results
-

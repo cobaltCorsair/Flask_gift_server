@@ -350,9 +350,9 @@
 
     function add_gift() {
         if (GroupID === 1) {
-            let name = $('#popupEdit #nm').val();
-            let image = $('#popupEdit #img').val();
-            let title = $('#popupEdit #ttl').val();
+            let name = $('#popupAdd #nm').val();
+            let image = $('#popupAdd #img').val();
+            let title = $('#popupAdd #ttl').val();
 
             (async () => {
                 let response = await fetch(SERVER_PATH + 'addnewpresent', {

@@ -12,6 +12,7 @@ if 'sqlite' in app.config['SQLALCHEMY_DATABASE_URI']:
     def _fk_pragma_on_connect(dbapi_con, con_record):
         """Включаем поддержку внешних ключей"""
         dbapi_con.execute('pragma foreign_keys=ON')
+        dbapi_con.execute("pragma journal_mode=wal;")
 
 
     with app.app_context():
