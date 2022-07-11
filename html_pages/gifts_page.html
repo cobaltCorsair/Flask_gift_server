@@ -1,0 +1,778 @@
+<div id="AdminMenu">
+    <div id="NewPresent" onclick="add_win_show(); return false;">Создать новый подарок</div>
+    <div id="RefreshUserList" onclick="refresh_user_list(); return false;">Обновить список пользователей</div>
+    <div id="AddUserToList" onclick="add_user_win_show(); return false;">Добавить пользователя вручную</div>
+    <div id="DelUserFromList" onclick="del_user_win_show(); return false;">Удалить пользователя</div>
+    <div id="ResetLimits" onclick="reset_limits(); return false;">Сбросить лимиты</div>
+</div>
+
+<div id="Basket"></div>
+
+<script type="text/javascript">
+    const SERVER_PATH = 'https://cobaltcorsair.ru/'; // адрес сервера
+    const GROUPS_FOR_LIST = '1,2,5,9,11'; // группы, которым можно дарить подарки
+</script>
+
+<div id="sendGift">
+    <!-- Starts Here -->
+    <div id="popupGift">
+        <!--  Form -->
+        <form action="" id="form" method="post" name="form" onsubmit="return false;">
+            <div class="cl-btn-7" id="close" onclick="send_win_hide()"></div>
+            <header>Отправить подарок</header>
+            <p id="adr">Выбрать адресата из списка:</p>
+            <select id="userList">
+            </select>
+            <script type="text/javascript">
+                (async () => {
+                    let response = await fetch(SERVER_PATH + 'getallusers', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    let usersData = await response.json();
+                    let users = JSON.parse(JSON.stringify(usersData));
+                    let list = '';
+                    for (let key in users) {
+                        if (users[key]['forum_id'] !== UserID) {
+                            list += '<option value="' + users[key]['forum_id'] + '">' + users[key]['forum_name'] + '</option>';
+                        }
+                    }
+                    $('#userList').html(list);
+                })();
+            </script>
+            <textarea id="msg" name="message" placeholder="Пожелание"></textarea>
+            <button class='submit' onclick="send_gift(); return false;">Отправить</button>
+        </form>
+    </div>
+    <!-- Ends Here -->
+</div>
+
+<div id="addNewGift">
+    <!-- Starts Here -->
+    <div id="popupAdd">
+        <!--  Form -->
+        <form action="" id="form" method="post" name="form" onsubmit="return false;">
+            <div class="cl-btn-7" id="close" onclick="add_win_hide()"></div>
+            <header>Добавить новый подарок</header>
+            <p id="info">Добавляет новый подарок в систему подарков</p>
+            <textarea id="nm" name="name" placeholder="Название подарка"></textarea>
+            <textarea id="img" name="image"
+                      placeholder="URL картинки подарка, 50х50 или больше (квадратной формы)"></textarea>
+            <textarea id="ttl" name="title" placeholder="Краткое описание подарка"></textarea>
+            <button class='submit' onclick="add_gift(); return false;">Отправить</button>
+        </form>
+    </div>
+    <!-- Ends Here -->
+</div>
+
+
+<div id="editGift">
+    <!-- Starts Here -->
+    <div id="popupEdit">
+        <!--  Form -->
+        <form action="" id="form" method="post" name="form" onsubmit="return false;">
+            <div class="cl-btn-7" id="close" onclick="edit_win_hide()"></div>
+            <header>Редактировать подарок</header>
+            <p id="info">Изменяет подарок в системе подарков</p>
+            <input type=hidden id="p_id" name="pres_id" value="">
+            <textarea id="nm" name="name" placeholder="Название подарка"></textarea>
+            <textarea id="img" name="image"
+                      placeholder="URL картинки подарка, 50х50 или больше (квадратной формы)"></textarea>
+            <textarea id="ttl" name="title" placeholder="Краткое описание подарка"></textarea>
+            <button class='submit' onclick="edit_gift(); return false;">Отправить</button>
+        </form>
+    </div>
+    <!-- Ends Here -->
+</div>
+
+<div id="addNewUser">
+    <!-- Starts Here -->
+    <div id="popupUserAdd">
+        <!--  Form -->
+        <form action="" id="form" method="post" name="form" onsubmit="return false;">
+            <div class="cl-btn-7" id="close" onclick="add_user_win_hide()"></div>
+            <header>Добавить нового пользователя</header>
+            <p id="info">Добавляет пользователя в систему подарков</p>
+            <textarea id="fid" name="forum_id" placeholder="ID пользователя"></textarea>
+            <textarea id="fnm" name="forum_name" placeholder="Имя пользователя"></textarea>
+            <button class='submit' onclick="add_new_user(); return false;">Отправить</button>
+        </form>
+    </div>
+    <!-- Ends Here -->
+</div>
+
+<div id="delUser">
+    <!-- Starts Here -->
+    <div id="popupUserDel">
+        <!--  Form -->
+        <form action="" id="form" method="post" name="form" onsubmit="return false;">
+            <div class="cl-btn-7" id="close" onclick="del_user_win_hide()"></div>
+            <header>Удалить пользователя</header>
+            <p id="info">Удаляет пользователя из системы подарков</p>
+            <textarea id="del_fid" name="forum_id" placeholder="ID пользователя"></textarea>
+            <button class='submit' onclick="del_user(); return false;">Отправить</button>
+        </form>
+    </div>
+    <!-- Ends Here -->
+</div>
+
+<script type="text/javascript">
+    function send_win_show(item_id) {
+        // show form
+        document.getElementById('sendGift').style.display = "block";
+        // insert present to form
+        $('dfn#' + item_id + '"').clone(true).unwrap().insertAfter('#popupGift > #form > header');
+    }
+
+    function send_win_hide() {
+        // close form
+        $('#form > dfn').remove();
+        document.getElementById('sendGift').style.display = "none";
+        $('#popupGift> #form')[0].reset();
+    }
+
+    function add_win_show() {
+        // show form
+        document.getElementById('addNewGift').style.display = "block";
+    }
+
+    function add_win_hide() {
+        // close form
+        $('#form > dfn').remove();
+        document.getElementById('addNewGift').style.display = "none";
+        $('#popupAdd > #form')[0].reset();
+    }
+
+    function add_user_win_show() {
+        // show form
+        document.getElementById('addNewUser').style.display = "block";
+    }
+
+    function add_user_win_hide() {
+        // close form
+        $('#form > dfn').remove();
+        document.getElementById('addNewUser').style.display = "none";
+        $('#popupUserAdd> #form')[0].reset();
+    }
+
+    function del_user_win_show() {
+        // show form
+        document.getElementById('delUser').style.display = "block";
+    }
+
+    function del_user_win_hide() {
+        // close form
+        $('#form > dfn').remove();
+        document.getElementById('delUser').style.display = "none";
+        $('#popupUserDel> #form')[0].reset();
+
+    }
+
+    function edit_win_show() {
+        $('strong.edit').click(function () {
+            // show form
+            document.getElementById('editGift').style.display = "block";
+            // insert id to form
+            let editedID = $(this).attr('data-uid');
+            $('#p_id').val(editedID);
+            (async () => {
+                let response = await fetch(SERVER_PATH + 'geteditpresent', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({'id': editedID}),
+                });
+                let answer = await response.json();
+                let get_answer = JSON.parse(JSON.stringify(answer));
+                // insert data in form
+                $('#popupEdit #nm').val(get_answer['name']);
+                $('#popupEdit #img').val(get_answer['image']);
+                $('#popupEdit #ttl').val(get_answer['title']);
+            })();
+        });
+    }
+
+    function edit_win_hide() {
+        // close form
+        document.getElementById('editGift').style.display = "none";
+        $('#popupEdit > #form')[0].reset();
+    }
+
+    function edit_gift() {
+        // edit gift
+        if (GroupID === 1) {
+            let pres_id = $('#popupEdit #p_id').val();
+            let name = $('#popupEdit #nm').val();
+            let image = $('#popupEdit #img').val();
+            let title = $('#popupEdit #ttl').val();
+
+            (async () => {
+                let response = await fetch(SERVER_PATH + 'editpresent', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        'id': pres_id,
+                        'name': name,
+                        'title': title,
+                        'image': image
+                    }),
+                });
+                let answer = await response.json();
+                let get_answer = JSON.parse(JSON.stringify(answer));
+                alert(get_answer['answer']);
+                edit_win_hide();
+                create_present_list();
+            })();
+        } else {
+            alert('Эта функция предназначена только для администратора!')
+        }
+    }
+
+    function add_new_user() {
+        // add new user to db
+        if (GroupID === 1) {
+            let name = document.getElementById('fnm').value;
+            let id = document.getElementById('fid').value;
+
+            (async () => {
+                let response = await fetch(SERVER_PATH + 'addnewuser', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        'forum_name': name,
+                        'id': +id,
+                    }),
+                });
+                let answer = await response.json();
+                let get_answer = JSON.parse(JSON.stringify(answer));
+                alert(get_answer['answer']);
+                add_user_win_hide();
+            })();
+        } else {
+            alert('Эта функция предназначена только для администратора!')
+        }
+    }
+
+    function send_gift() {
+        // sending a gift
+        let user_list = document.getElementById("userList");
+        let user_id = user_list.options[user_list.selectedIndex].value;
+        let gift_id = $('#form > dfn').attr('id');
+        let message = document.getElementById('msg').value;
+        console.log(user_id, gift_id, message);
+
+        (async () => {
+            let response = await fetch(SERVER_PATH + 'makepresent', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    'addressee': user_id,
+                    'sender': UserID,
+                    'id_present': gift_id,
+                    'comment': message
+                }),
+            });
+            let answer = await response.json();
+            let get_answer = JSON.parse(JSON.stringify(answer));
+            alert(get_answer['answer']);
+            send_win_hide();
+        })();
+    }
+
+    function delete_gift_from_main_list() {
+        // delete a gift
+        $('strong.del').click(function () {
+            let is_delete_process = confirm("Вы точно хотите удалить подарок? Если этот подарок уже был подарен пользователями, он удалится из их списков полученных подарков.");
+            if (is_delete_process) {
+                let deletedID = $(this).attr('data-uid');
+                (async () => {
+                    let response = await fetch(SERVER_PATH + 'deletepresent', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({'id': deletedID}),
+                    });
+                    let answer = await response.json();
+                    let get_answer = JSON.parse(JSON.stringify(answer));
+                    $(this).parent().remove();
+                    alert(get_answer['answer']);
+                })();
+            }
+        });
+    }
+
+    function create_present_list() {
+        // create presents list on page
+        (async () => {
+            let response = await fetch(SERVER_PATH + 'getallpresents', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            let result = await response.json();
+            let data = JSON.parse(JSON.stringify(result));
+            if (!data['answer']) {
+                let out = '';
+                for (let key in data) {
+                    out += '<item>';
+                    if (GroupID === 1) {
+                        out += '<strong class="del" title="Удалить" data-uid="' + data[key]['id'] + '"> × </strong>';
+                        out += '<strong class="edit" title="Редактировать" data-uid="' + data[key]['id'] + '"> ✎ </strong>';
+                    }
+                    out += '<dfn id="' + data[key]['id'] + '"><span>';
+                    out += '<span class="name">' + data[key]['name'] + '</strong></span>';
+                    out += '<span class="desc">' + data[key]['title'] + '</span>';
+                    out += '</span></span><img src="' + data[key]['image'] + '" width="50" height="50" /></dfn>';
+                    if (GroupID !== 3) {
+                        out += '<button class="send" onclick="send_win_show(' + data[key]['id'] + ')">Отправить</button>';
+                    }
+                    out += '</item>';
+                }
+                $('#Basket').html(out);
+                delete_gift_from_main_list();
+                edit_win_show();
+            } else {
+                $('#Basket').html(data['answer']);
+            }
+        })();
+    }
+
+    function add_gift() {
+        if (GroupID === 1) {
+            let name = $('#popupAdd #nm').val();
+            let image = $('#popupAdd #img').val();
+            let title = $('#popupAdd #ttl').val();
+
+            (async () => {
+                let response = await fetch(SERVER_PATH + 'addnewpresent', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        'name': name,
+                        'title': title,
+                        'image': image
+                    }),
+                });
+                let answer = await response.json();
+                let get_answer = JSON.parse(JSON.stringify(answer));
+                alert(get_answer['answer']);
+                add_win_hide();
+                create_present_list();
+            })();
+        } else {
+            alert('Эта функция предназначена только для администратора!')
+        }
+    }
+
+    function refresh_user_list() {
+        // updates the list of users by group
+        if (GroupID === 1) {
+            (async () => {
+                let req = 'https://' + window.location.hostname + '/api.php?method=users.get&group_id=' + GROUPS_FOR_LIST + '&limit=500'
+                let response = await fetch(SERVER_PATH + 'addallusers', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        'url': req,
+                    }),
+                });
+                let answer = await response.json();
+                let get_answer = JSON.parse(JSON.stringify(answer));
+                alert(get_answer['answer']);
+            })();
+        } else {
+            alert('Эта функция предназначена только для администратора!')
+        }
+    }
+
+    function reset_limits() {
+        // reset limits
+        if (GroupID === 1) {
+            (async () => {
+                let response = await fetch(SERVER_PATH + 'resetlimits', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                let answer = await response.json();
+                let get_answer = JSON.parse(JSON.stringify(answer));
+                alert(get_answer['answer']);
+            })();
+        } else {
+            alert('Эта функция предназначена только для администратора!')
+        }
+    }
+
+    function del_user() {
+        // add del user from db
+        if (GroupID === 1) {
+
+            let id = document.getElementById('del_fid').value;
+
+            (async () => {
+                let response = await fetch(SERVER_PATH + 'deleteuser', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        'forum_id': +id,
+                    }),
+                });
+                let answer = await response.json();
+                let get_answer = JSON.parse(JSON.stringify(answer));
+                alert(get_answer['answer']);
+                del_user_win_hide();
+            })();
+        } else {
+            alert('Эта функция предназначена только для администратора!')
+        }
+    }
+
+    create_present_list();
+</script>
+
+<style>
+    /*Presents*/
+    #pun-pages .main .container {
+        overflow: visible;
+    }
+
+    dfn {
+        display: inline-block;
+        position: relative;
+        width: 50px;
+        height: 50px;
+        right: -3px;
+        padding: 5px;
+    }
+
+    dfn > span {
+        display: none;
+    }
+
+    strong.del {
+        left: 59px;
+        position: relative;
+        z-index: 10;
+        top: 0;
+        font-size: 14px;
+        cursor: pointer;
+        height: 0;
+    }
+
+    strong.edit {
+        left: 59px;
+        position: relative;
+        z-index: 10;
+        top: 14px;
+        font-size: 14px;
+        cursor: pointer;
+        height: 0;
+    }
+
+    dfn:hover > span {
+        display: block;
+        position: absolute;
+        top: calc(1em + 5px);
+        left: 1em;
+        max-width: 20em;
+        background: #212422;
+        padding: .5em;
+        z-index: 1000;
+        color: #c6b89b;
+        cursor: default;
+        width: 15em;
+    }
+
+    dfn img {
+        max-width: 12em;
+    }
+
+    dfn > span span.name {
+        display: block;
+        margin-bottom: .5em;
+        font-weight: bold;
+    }
+
+    dfn > span span.desc {
+        display: block;
+        margin-bottom: 0.5em;
+        color: #bbbab9;
+    }
+
+    item {
+        display: inline-grid;
+        padding: 5px;
+    }
+
+    button.send {
+        font-size: 12px;
+        width: 68px;
+        background-color: #1e1e1e;
+        color: #b7a98f;
+        cursor: pointer;
+        border: none;
+        margin-left: -2px;
+        padding: 1px 2px;
+    }
+
+    #pun-pages p#adr {
+        margin: 0;
+        position: absolute;
+        top: 49px;
+        left: 117px;
+        color: #baad93;
+        font-style: italic;
+    }
+
+    /*Form*/
+    #sendGift, #addNewGift, #addNewUser, #delUser, #editGift {
+        width: 100%;
+        height: 100%;
+        opacity: .98;
+        top: 0;
+        left: 0;
+        display: none;
+        position: fixed;
+        background-color: #313131;
+        overflow: auto;
+        z-index: 10000
+    }
+
+
+    div#popupGift, div#popupAdd, div#popupUserAdd, div#popupUserDel, div#popupEdit {
+        position: absolute;
+        left: 50%;
+        top: 17%;
+        margin-left: -202px;
+    }
+
+    header {
+        text-align: center;
+        font-style: normal;
+        text-transform: uppercase;
+        font-size: 12px;
+        font-weight: bold;
+        background: #c2b499;
+        font-family: verdana, serif;
+        border-radius: 5px;
+    }
+
+    #pun-pages form {
+        max-width: 300px;
+        min-width: 250px;
+        padding: 10px 50px;
+        border: 2px solid #c2b499;
+        border-radius: 10px;
+        background: url(https://forumstatic.ru/files/001a/e7/ed/39553.jpg) top right;
+    }
+
+    #popupGift #msg {
+        font-size: 12px;
+        margin-bottom: 5px;
+        margin-top: 18px;
+    }
+
+    #popupAdd #form, #popupEdit #form {
+        width: 300px;
+    }
+
+    #popupAdd #nm, #popupEdit #nm {
+        font-size: 12px;
+        padding: 5px;
+        width: 96%;
+        margin-bottom: 5px;
+        height: 36px;
+    }
+
+    #popupAdd #img, #popupEdit #img {
+        height: 36px;
+        font-size: 12px;
+        padding: 5px;
+        width: 96%;
+        margin-bottom: 5px;
+        margin-top: 5px;
+    }
+
+    #popupAdd #ttl, #popupEdit #ttl {
+        font-size: 12px;
+        padding: 5px;
+        width: 96%;
+        margin-bottom: 5px;
+        margin-top: 5px;
+    }
+
+    button.submit {
+        margin-left: 90px;
+        margin-top: 5px;
+        padding: 5px;
+        width: 114px;
+        background-color: #020202;
+        color: #c8bea7;
+        border: 1px solid;
+        cursor: pointer;
+    }
+
+    #pun-pages p {
+        margin-top: 30px
+    }
+
+    #pun-pages input[type=text] {
+        width: 82%;
+        margin-top: 30px;
+        border: 1px solid #ccc;
+        padding: 10px 10px 10px 40px;
+        font-size: 16px;
+    }
+
+    #pun-pages textarea {
+        width: 82%;
+        height: 95px;
+        resize: none;
+        margin-top: 30px;
+        border: 1px solid #ccc;
+        padding: 10px 10px 10px 10px;
+        font-size: 16px;
+        margin-bottom: 30px;
+        min-width: 275px;
+    }
+
+    #pun-pages #submit {
+        text-decoration: none;
+        width: 100%;
+        text-align: center;
+        display: block;
+        background-color: #FFBC00;
+        color: #fff;
+        border: 1px solid #FFCB00;
+        padding: 10px 0;
+        font-size: 20px;
+        cursor: pointer;
+        border-radius: 5px
+    }
+
+    form dfn {
+        top: 8px;
+        left: -3px;
+    }
+
+    #userList {
+        width: 224px;
+        height: 21px;
+        border: 1px solid #ccc;
+        font-size: 12px;
+    }
+
+    #pun-pages #fid, #pun-pages #fnm, #pun-pages #del_fid {
+        height: 20px;
+        margin-bottom: 5px;
+        font-size: 12px;
+    }
+
+    #pun-pages #fnm {
+        margin-top: 5px;
+    }
+
+    p#info {
+        text-align: center;
+        font-style: italic;
+        padding: 0;
+        margin: 8px 8px -22px;
+        color: #bbbab9;
+    }
+
+    /*Admin options*/
+    #NewPresent, #RefreshUserList, #AddUserToList, #DelUserFromList, #ResetLimits {
+        position: relative;
+        cursor: pointer;
+        float: left;
+        border: 1px solid #968055;
+        background: #000;
+        color: #c3ba9b;
+        margin: 3px;
+        left: 17px;
+        padding: 3px 5px;
+    }
+
+    .gid1 #AdminMenu {
+        display: block;
+    }
+
+    #AdminMenu {
+        position: relative;
+        height: 10px;
+        padding: 5px;
+        font-size: 11px;
+        display: none;
+    }
+
+    /*Close button*/
+    .cl-btn-7 {
+        width: 40px;
+        height: 40px;
+        border-radius: 40px;
+        position: absolute;
+        z-index: 1;
+        margin: 20px auto;
+        cursor: pointer;
+        right: -14px;
+        top: -37px;
+    }
+
+    .cl-btn-7:before {
+        content: '+';
+        color: #c7bda7;
+        position: absolute;
+        z-index: 2;
+        transform: rotate(45deg);
+        font-size: 50px;
+        line-height: 1;
+        top: -7px;
+        left: 3px;
+        transition: all 0.3s cubic-bezier(0.77, 0, 0.2, 0.85);
+    }
+
+    .cl-btn-7:after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 100%;
+        background: #1e1e1f;
+        z-index: 1;
+        transition: all 0.3s cubic-bezier(0.77, 0, 0.2, 0.85);
+        transform: scale(0.01);
+        border: 2px solid #c7bea6;
+    }
+
+    .cl-btn-7:hover:after {
+        transform: scale(1);
+        top: -2px;
+        left: -1px;
+    }
+
+    .cl-btn-7:hover:before {
+        transform: scale(0.8) rotate(45deg);
+        color: #90908f;
+    }
+
+</style>

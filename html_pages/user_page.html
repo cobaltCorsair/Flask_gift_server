@@ -1,0 +1,179 @@
+<div id="Basket"></div>
+
+<script type="text/javascript">
+    const SERVER_PATH = 'https://cobaltcorsair.ru/'; // адрес сервера
+
+    function header_by_name(otherUID) {
+        let req = 'https://' + window.location.hostname + '/api.php?method=users.get&user_id=' + otherUID + '&limit=1';
+        (async () => {
+            let response = await fetch(req, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            let result = await response.json();
+            let f_name = result.response['users'][0].username;
+            $('h1 span').html('Подарки: ' + f_name);
+        })();
+    }
+
+    function create_present_list() {
+        // get user id
+        let params = (new URL(document.location)).searchParams;
+        let otherUID = params.get("id");
+
+        header_by_name(otherUID);
+
+        // create user presents list
+        (async () => {
+            let response = await fetch(SERVER_PATH + 'getuserpresents', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    'id': otherUID
+                }),
+            });
+
+            let result = await response.json();
+            let data = JSON.parse(JSON.stringify(result));
+            if (!data['answer']) {
+                let out = '';
+                for (let key in data) {
+                    out += '<item>';
+                    if (GroupID === 1) {
+                        out += '<strong class="del" title="Удалить" data-uid="' + data[key]['id'] + '"> × </strong>';
+                    }
+                    out += '<dfn id="' + data[key]['id'] + '"><span>';
+                    out += '<span class="name">' + data[key]['name'] + '</strong></span>';
+                    out += '<span class="date">' + data[key]['date'] + '</span>';
+                    out += '<span class="from">' + 'от: ' + data[key]['forum_name'] + '</span>';
+                    out += '<span class="comment">' + data[key]['comment'] + '</span>';
+                    out += '</span></span><img src="' + data[key]['image'] + '" width="50" height="50" /></dfn></item>';
+                }
+                $('#Basket').html(out);
+                delete_gift_from_user_list();
+            } else {
+                $('#Basket').html(data['answer']);
+            }
+        })();
+    }
+
+    function delete_gift_from_user_list() {
+        // delete a gift
+        $('strong.del').click(function () {
+            let is_delete_process = confirm("Вы точно хотите удалить подарок со страницы этого пользователя?");
+            if (is_delete_process) {
+                let deletedID = $(this).attr('data-uid');
+                (async () => {
+                    let response = await fetch(SERVER_PATH + 'deletemadepresent', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({'id': deletedID}),
+                    });
+                    let answer = await response.json();
+                    let get_answer = JSON.parse(JSON.stringify(answer));
+                    $(this).parent().remove();
+                    alert(get_answer['answer']);
+                })();
+            }
+        });
+    }
+
+    create_present_list();
+</script>
+
+<style>
+    /*Present*/
+    #pun-pages .main .container {
+        overflow: visible;
+    }
+
+    dfn {
+        display: inline-block;
+        position: relative;
+        width: 50px;
+        height: 50px;
+        right: -3px;
+        padding: 5px;
+    }
+
+    dfn > span {
+        display: none;
+    }
+
+    dfn:hover > span {
+        display: block;
+        position: absolute;
+        top: calc(1em + 5px);
+        left: 1em;
+        max-width: 20em;
+        background: #212422;
+        padding: .5em;
+        z-index: 1000;
+        color: #c6b89b;
+        cursor: default;
+        width: 15em;
+    }
+
+    dfn img {
+        max-width: 12em;
+    }
+
+    dfn > span span.name {
+        display: block;
+        margin-bottom: .5em;
+        font-weight: bold;
+    }
+
+    dfn > span span.desc {
+        display: block;
+        margin-bottom: .5em;
+    }
+
+    dfn > span span.from {
+        display: block;
+        margin-bottom: .5em;
+    }
+
+    dfn > span span.comment {
+        display: block;
+        margin-bottom: .5em;
+    }
+
+    dfn > span span.date {
+        display: block;
+        margin-bottom: .5em;
+    }
+
+    item {
+        display: inline-grid;
+        padding: 5px;
+    }
+
+    strong.del {
+        left: 59px;
+        position: relative;
+        z-index: 10;
+        top: 0;
+        font-size: 14px;
+        cursor: pointer;
+        height: 0;
+    }
+
+    span.date {
+        font-size: 10px;
+        color: #bbbab9;
+    }
+
+    span.from {
+        font-style: italic;
+        font-weight: bold;
+        font-size: 10px;
+    }
+
+</style>

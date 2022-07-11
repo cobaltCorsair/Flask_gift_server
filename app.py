@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS, cross_origin
+from apscheduler.schedulers.background import BackgroundScheduler
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -11,12 +12,20 @@ if 'sqlite' in app.config['SQLALCHEMY_DATABASE_URI']:
     def _fk_pragma_on_connect(dbapi_con, con_record):
         """Включаем поддержку внешних ключей"""
         dbapi_con.execute('pragma foreign_keys=ON')
+        dbapi_con.execute("pragma journal_mode=wal;")
+
 
     with app.app_context():
         from sqlalchemy import event
+
         event.listen(db.engine, 'connect', _fk_pragma_on_connect)
 
 from app_crud import UpdateTables, ViewResults
+
+
+@app.route('/')
+def start_app():
+    return 'Сервер успешно запущен!'
 
 
 @app.route('/addnewuser', methods=["POST"])
@@ -29,15 +38,19 @@ def add_new_user():
     # добавляем метод записи в бд
     # data = request.data
     if request.method == 'POST':
-        name = request.json['name']
+        forum_name = request.json['forum_name']
         user_id = request.json['id']
-        request_result = UpdateTables.add_new_user(name, user_id)
+        request_result = UpdateTables.add_new_user(forum_name, user_id)
         return request_result
 
 
 @app.route('/deleteuser', methods=["POST"])
 @cross_origin()
 def delete_user():
+    """
+    Удаляем пользователя из бд
+    :return:
+    """
     if request.method == 'POST':
         id = request.json['forum_id']
         request_result = UpdateTables.delete_user(id)
@@ -52,12 +65,28 @@ def add_new_present():
     :return:
     """
     # добавляем метод записи в бд
-    # data = request.data
     if request.method == 'POST':
         name = request.json['name']
         title = request.json['title']
         image = request.json['image']
         request_result = UpdateTables.add_new_present(name, title, image)
+        return request_result
+
+
+@app.route('/editpresent', methods=["POST"])
+@cross_origin()
+def edit_present():
+    """
+    Редактируем базу подарков
+    :return:
+    """
+    # добавляем метод записи в бд
+    if request.method == 'POST':
+        id = request.json['id']
+        name = request.json['name']
+        title = request.json['title']
+        image = request.json['image']
+        request_result = UpdateTables.edit_present(id, name, title, image)
         return request_result
 
 
@@ -82,18 +111,52 @@ def make_present():
 @app.route('/deletepresent', methods=["POST"])
 @cross_origin()
 def delete_present():
+    """
+    Удаляем подарок из базы
+    :return:
+    """
     if request.method == 'POST':
         id = request.json['id']
         request_result = UpdateTables.delete_present(id)
         return request_result
 
 
+@app.route('/geteditpresent', methods=["POST"])
+@cross_origin()
+def get_edit_present():
+    """
+    Получаем подарок для редактирования
+    :return:
+    """
+    if request.method == 'POST':
+        id = request.json['id']
+        request_result = ViewResults.get_edit_present(id)
+        return request_result
+
+
 @app.route('/deletemadepresent', methods=["POST"])
 @cross_origin()
 def delete_made_present():
+    """
+    Удаляем сделанный подарок
+    :return:
+    """
     if request.method == 'POST':
         id = request.json['id']
         request_result = UpdateTables.delete_made_present(id)
+        return request_result
+
+
+@app.route('/addallusers', methods=["POST"])
+@cross_origin()
+def add_all_users():
+    """
+    Записываем в бд всех юзеров через запрос к апи
+    :return:
+    """
+    if request.method == 'POST':
+        url = request.json['url']
+        request_result = UpdateTables.add_all_users(url)
         return request_result
 
 
@@ -136,5 +199,29 @@ def get_all_users():
         return request_result
 
 
+@app.route('/resetlimits', methods=["POST"])
+@cross_origin()
+def reset_limits_by_hand():
+    """
+    Сбрасываем лимиты вручную, добавляет 5 попыток дарения подарков всем юзерам
+    :return:
+    """
+    if request.method == 'POST':
+        request_result = UpdateTables.update_limits_everyday()
+        return request_result
+
+
+def reset_limits():
+    """
+    Ежесуточный сброс лимитов по таймеру
+    :return:
+    """
+    UpdateTables.update_limits_everyday()
+
+
+sheduler = BackgroundScheduler({'apscheduler.timezone': 'Europe/Moscow'})
+sheduler.add_job(reset_limits, 'interval', hours=24)
+sheduler.start()
+
 if __name__ == "__main__":
-    app.run('0.0.0.0', 5000)  # запустим сервер на 5000 порту
+    app.run()  # запустим сервер

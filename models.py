@@ -9,23 +9,25 @@ class Username(db.Model):
     __tablename__ = 'username'
     id = Column(db.Integer, primary_key=True)
     forum_id = Column(db.Integer(), index=True, nullable=False, unique=True)
-    name = Column(db.String(120), nullable=False)
+    forum_name = Column(db.String(120), nullable=False)
     # отношения
     user_addr = db.relationship('UserPresents', backref='username_a', cascade="all,delete",
                                 foreign_keys='UserPresents.id_user_addressee')
     user_send = db.relationship('UserPresents', backref='username_s',
                                 foreign_keys='UserPresents.id_user_sender')
+    user_limits = db.relationship('Limits', backref='Limits_uid', cascade="all,delete",
+                                  foreign_keys='Limits.user_forum_id')
 
     def __repr__(self):
-        return '<User %r>' % self.name
+        return '<User %r>' % self.forum_name
 
     def serialize(self):
         """Метод для сериализации объекта"""
         return {
-                "id": self.id,
-                "forum_id": self.forum_id,
-                "name": self.name
-                }
+            "id": self.id,
+            "forum_id": self.forum_id,
+            "forum_name": self.forum_name
+        }
 
 
 class Presents(db.Model):
@@ -45,11 +47,11 @@ class Presents(db.Model):
     def serialize(self):
         """Метод для сериализации объекта"""
         return {
-                "id": self.id,
-                "name": self.name,
-                "title": self.title,
-                "image": self.image,
-                }
+            "id": self.id,
+            "name": self.name,
+            "title": self.title,
+            "image": self.image,
+        }
 
 
 class UserPresents(db.Model):
@@ -65,10 +67,18 @@ class UserPresents(db.Model):
     def serialize(self):
         """Метод для сериализации объекта"""
         return {
-                "id": self.id,
-                "id_user_addressee": self.id_user_addressee,
-                "id_user_sender": self.id_user_sender,
-                "id_present": self.id_present,
-                "comment": self.comment,
-                "date": self.date
-                }
+            "id": self.id,
+            "id_user_addressee": self.id_user_addressee,
+            "id_user_sender": self.id_user_sender,
+            "id_present": self.id_present,
+            "comment": self.comment,
+            "date": self.date.strftime("%d:%m:%Y")
+        }
+
+
+class Limits(db.Model):
+    """Лимиты на подарки у пользователей"""
+    __tablename__ = 'limits'
+    id = Column(db.Integer(), primary_key=True)
+    user_forum_id = Column(db.Integer(), db.ForeignKey(Username.forum_id))
+    limit = Column(db.Integer(), index=True, nullable=False, unique=False)

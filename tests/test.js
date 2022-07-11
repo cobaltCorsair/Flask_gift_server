@@ -3,7 +3,7 @@ $.ajax({
     url: "http://127.0.0.1:5000/addnewuser",
     type: "POST",
     contentType: "application/json",
-    data: JSON.stringify({'name':'test', 'id':1}),
+    data: JSON.stringify({'name': 'Сай', 'id': 2}),
 });
 
 // тестовый запрос на удаление пользователя с неким id
@@ -19,7 +19,7 @@ $.ajax({
     url: "http://127.0.0.1:5000/addnewpresent",
     type: "POST",
     contentType: "application/json",
-    data: JSON.stringify({'name':'Подарок', 'title':'тут какое-то описание', 'image': 'юрл картинки'}),
+    data: JSON.stringify({'name': 'Подарок', 'title': 'тут какое-то описание', 'image': 'юрл картинки'}),
 });
 
 // тестовый запрос на получение подарков пользователя с неким id
@@ -67,3 +67,20 @@ $.ajax({
     type: "POST",
     contentType: "application/json",
 });
+
+// тестовый запрос на запись всех пользователей в бд
+(async () => {
+    let req = 'https://dis.f-rpg.me/api.php?method=users.get&group_id=1,5,11&limit=500'
+    let response = await fetch('http://127.0.0.1:5000/addallusers', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            'url': req,
+        }),
+    });
+    let answer = await response.json();
+    let get_answer = JSON.parse(JSON.stringify(answer));
+    alert(get_answer['answer']);
+})();
