@@ -262,6 +262,7 @@
 
     function send_gift() {
         // sending a gift
+        if (GROUPS_FOR_LIST.indexOf(GroupID)!==-1) {
         let user_list = document.getElementById("userList");
         let user_id = user_list.options[user_list.selectedIndex].value;
         let gift_id = $('#form > dfn').attr('id');
@@ -286,6 +287,11 @@
             alert(get_answer['answer']);
             send_win_hide();
         })();
+    } else {
+         alert('Вас нет в списках доступа! Обратитесь к администратору форума!');
+            send_win_hide();
+        }
+
     }
 
     function delete_gift_from_main_list() {
