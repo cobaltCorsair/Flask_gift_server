@@ -72,7 +72,7 @@ class UserPresents(db.Model):
             "id_user_sender": self.id_user_sender,
             "id_present": self.id_present,
             "comment": self.comment,
-            "date": self.date.strftime("%d:%m:%Y")
+            "date": self.date.strftime("%d.%m.%Y")
         }
 
 
