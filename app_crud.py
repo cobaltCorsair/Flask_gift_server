@@ -236,7 +236,7 @@ class ViewResults:
         Получаем всех юзеров системы подарков
         :return: Результат запроса
         """
-        all_users = db.session.query(Username).all()
+        all_users = db.session.query(Username).order_by(Username.forum_name).all()
         if not all_users:
             return {'answer': 'Пользователей ещё нет'}
 

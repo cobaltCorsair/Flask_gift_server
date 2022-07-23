@@ -70,8 +70,8 @@ $.ajax({
 
 // тестовый запрос на запись всех пользователей в бд
 (async () => {
-    let req = 'https://dis.f-rpg.me/api.php?method=users.get&group_id=1,5,11&limit=500'
-    let response = await fetch('http://127.0.0.1:5000/addallusers', {
+    let req = 'https://dis.f-rpg.me/api.php?method=users.get&group_id=1,2,5,9,11&limit=500'
+    let response = await fetch('https://cobaltcorsair.ru/addallusers', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
