@@ -199,6 +199,19 @@ def get_all_users():
         return request_result
 
 
+@app.route('/getpresentscount', methods=["POST"])
+@cross_origin()
+def get_presents_count():
+    """
+    Получаем количество подарков пользователя
+    :return:
+    """
+    if request.method == 'POST':
+        user_id = request.json['id']
+        request_result = ViewResults.get_presents_count(user_id)
+        return request_result
+
+
 @app.route('/resetlimits', methods=["POST"])
 @cross_origin()
 def reset_limits_by_hand():

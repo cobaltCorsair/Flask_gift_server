@@ -242,3 +242,16 @@ class ViewResults:
 
         all_results = {all_users.index(i): i.serialize() for i in all_users}
         return all_results
+
+    @staticmethod
+    def get_presents_count(user_id):
+        """
+        Получаем количество подарков пользователя
+        :param user_id:
+        :return:
+        """
+        presents_count = db.session.query(UserPresents.id).filter(UserPresents.id_user_addressee == user_id).count()
+        if presents_count is not None:
+            return {'answer': presents_count}
+        else:
+            return {'answer': 0}
