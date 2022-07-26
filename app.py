@@ -207,8 +207,7 @@ def get_presents_count():
     :return:
     """
     if request.method == 'POST':
-        user_id = request.json['id']
-        request_result = ViewResults.get_presents_count(user_id)
+        request_result = ViewResults.get_presents_count()
         return request_result
 
 

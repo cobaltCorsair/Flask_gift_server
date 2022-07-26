@@ -10,7 +10,7 @@
 
 <script type="text/javascript">
     const SERVER_PATH = 'https://cobaltcorsair.ru/'; // адрес сервера
-    const GROUPS_FOR_LIST = '1,2,5,9,11'; // группы, которым можно дарить подарки
+    const GROUPS_FOR_LIST = '1,2,5,8,9,11'; // группы, которым можно дарить подарки
 </script>
 
 <div id="sendGift">
@@ -262,33 +262,33 @@
 
     function send_gift() {
         // sending a gift
-        if (GROUPS_FOR_LIST.indexOf(GroupID)!==-1) {
-        let user_list = document.getElementById("userList");
-        let user_id = user_list.options[user_list.selectedIndex].value;
-        let gift_id = $('#form > dfn').attr('id');
-        let message = document.getElementById('msg').value;
-        console.log(user_id, gift_id, message);
+        if (GROUPS_FOR_LIST.indexOf(GroupID) !== -1) {
+            let user_list = document.getElementById("userList");
+            let user_id = user_list.options[user_list.selectedIndex].value;
+            let gift_id = $('#form > dfn').attr('id');
+            let message = document.getElementById('msg').value;
+            console.log(user_id, gift_id, message);
 
-        (async () => {
-            let response = await fetch(SERVER_PATH + 'makepresent', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    'addressee': user_id,
-                    'sender': UserID,
-                    'id_present': gift_id,
-                    'comment': message
-                }),
-            });
-            let answer = await response.json();
-            let get_answer = JSON.parse(JSON.stringify(answer));
-            alert(get_answer['answer']);
-            send_win_hide();
-        })();
-    } else {
-         alert('Вас нет в списках доступа! Обратитесь к администратору форума!');
+            (async () => {
+                let response = await fetch(SERVER_PATH + 'makepresent', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        'addressee': user_id,
+                        'sender': UserID,
+                        'id_present': gift_id,
+                        'comment': message
+                    }),
+                });
+                let answer = await response.json();
+                let get_answer = JSON.parse(JSON.stringify(answer));
+                alert(get_answer['answer']);
+                send_win_hide();
+            })();
+        } else {
+            alert('Вас нет в списках доступа! Обратитесь к администратору форума!');
             send_win_hide();
         }
 

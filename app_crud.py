@@ -1,6 +1,7 @@
 from datetime import datetime
 from models import Username, Presents, UserPresents, Limits, db
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy import func
 import requests
 
 
@@ -244,13 +245,14 @@ class ViewResults:
         return all_results
 
     @staticmethod
-    def get_presents_count(user_id):
+    def get_presents_count():
         """
         Получаем количество подарков пользователя
-        :param user_id:
         :return:
         """
-        presents_count = db.session.query(UserPresents.id).filter(UserPresents.id_user_addressee == user_id).count()
+        presents_count = db.session.query(UserPresents.id_user_addressee, func.count(UserPresents.id)).\
+            group_by(UserPresents.id_user_addressee).all()
+        presents_count = {i[0]: i[1] for i in presents_count}
         if presents_count is not None:
             return {'answer': presents_count}
         else:

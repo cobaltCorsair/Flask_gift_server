@@ -84,3 +84,10 @@ $.ajax({
     let get_answer = JSON.parse(JSON.stringify(answer));
     alert(get_answer['answer']);
 })();
+
+// тестовый запрос на подсчет количества подарков
+$.ajax({
+    url: "http://127.0.0.1:5000/getpresentscount",
+    type: "POST",
+    contentType: "application/json",
+});
