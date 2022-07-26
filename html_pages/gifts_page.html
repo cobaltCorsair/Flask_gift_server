@@ -4,6 +4,7 @@
     <div id="AddUserToList" onclick="add_user_win_show(); return false;">Добавить игрока</div>
     <div id="DelUserFromList" onclick="del_user_win_show(); return false;">Удалить игрока</div>
     <div id="ResetLimits" onclick="reset_limits(); return false;">Сбросить лимиты</div>
+    <div id="RenameUser" onclick="rename_user_win_show(); return false;">Сменить ник</div>
 </div>
 
 <div id="Basket"></div>
@@ -67,7 +68,6 @@
     <!-- Ends Here -->
 </div>
 
-
 <div id="editGift">
     <!-- Starts Here -->
     <div id="popupEdit">
@@ -118,6 +118,22 @@
     <!-- Ends Here -->
 </div>
 
+<div id="renameUser">
+    <!-- Starts Here -->
+    <div id="popupUserRename">
+        <!--  Form -->
+        <form action="" id="form" method="post" name="form" onsubmit="return false;">
+            <div class="cl-btn-7" id="close" onclick="rename_user_win_hide()"></div>
+            <header>Переименовать пользователя</header>
+            <p id="info">Переименовывает пользователя системы подарков</p>
+            <textarea id="rfid" name="forum_id" placeholder="ID пользователя"></textarea>
+            <textarea id="rfnm" name="forum_name" placeholder="Новое имя пользователя"></textarea>
+            <button class='submit' onclick="rename_user(); return false;">Отправить</button>
+        </form>
+    </div>
+    <!-- Ends Here -->
+</div>
+
 <script type="text/javascript">
     function send_win_show(item_id) {
         // show form
@@ -162,11 +178,24 @@
         document.getElementById('delUser').style.display = "block";
     }
 
+    function rename_user_win_show() {
+        // show form
+        document.getElementById('renameUser').style.display = "block";
+    }
+
     function del_user_win_hide() {
         // close form
         $('#form > dfn').remove();
         document.getElementById('delUser').style.display = "none";
         $('#popupUserDel> #form')[0].reset();
+
+    }
+
+    function rename_user_win_hide() {
+        // close form
+        $('#form > dfn').remove();
+        document.getElementById('renameUser').style.display = "none";
+        $('#popupUserRename> #form')[0].reset();
 
     }
 
@@ -451,6 +480,10 @@
         }
     }
 
+    function rename_user() {
+        // TODO: Дописать запрос и саму функцию переименования пользователя
+    }
+
     create_present_list();
 </script>
 
@@ -554,7 +587,7 @@
         outline: 1px solid #665833;
     }
 
-    #sendGift, #addNewGift, #addNewUser, #delUser, #editGift {
+    #sendGift, #addNewGift, #addNewUser, #delUser, #editGift, #renameUser {
         width: 100%;
         height: 100%;
         opacity: .98;
@@ -568,7 +601,7 @@
     }
 
 
-    div#popupGift, div#popupAdd, div#popupUserAdd, div#popupUserDel, div#popupEdit {
+    div#popupGift, div#popupAdd, div#popupUserAdd, div#popupUserDel, div#popupEdit, div#popupUserRename {
         position: absolute;
         left: 50%;
         top: 17%;
@@ -691,13 +724,13 @@
         font-size: 12px;
     }
 
-    #pun-pages #fid, #pun-pages #fnm, #pun-pages #del_fid {
+    #pun-pages #fid, #pun-pages #fnm, #pun-pages #del_fid, #pun-pages #rfnm, #pun-pages #rfid {
         height: 20px;
         margin-bottom: 5px;
         font-size: 12px;
     }
 
-    #pun-pages #fnm {
+    #pun-pages #fnm, #pun-pages #rfnm {
         margin-top: 5px;
     }
 
@@ -710,7 +743,7 @@
     }
 
     /*Admin options*/
-    #NewPresent, #RefreshUserList, #AddUserToList, #DelUserFromList, #ResetLimits {
+    #NewPresent, #RefreshUserList, #AddUserToList, #DelUserFromList, #ResetLimits, #RenameUser {
         font-family: verdana, serif;
         font-size: 12px;
         text-decoration: none;
@@ -726,7 +759,7 @@
         left: 0;
         vertical-align: middle;
         transition: all 0.5s ease-in-out 0s;
-        padding: 4px 15px 4px 15px;
+        padding: 4px 15px 4px 10px;
     }
 
     .gid1 #AdminMenu {
