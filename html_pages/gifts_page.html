@@ -455,7 +455,7 @@
     }
 
     function del_user() {
-        // add del user from db
+        // del user from db
         if (GroupID === 1) {
 
             let id = document.getElementById('del_fid').value;
@@ -481,7 +481,31 @@
     }
 
     function rename_user() {
-        // TODO: Дописать запрос и саму функцию переименования пользователя
+        // rename user in db
+        if (GroupID === 1) {
+
+            let name = document.getElementById('rfnm').value;
+            let id = document.getElementById('rfid').value;
+
+            (async () => {
+                let response = await fetch(SERVER_PATH + 'renameuser', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        'new_name': name,
+                        'forum_id': +id,
+                    }),
+                });
+                let answer = await response.json();
+                let get_answer = JSON.parse(JSON.stringify(answer));
+                alert(get_answer['answer']);
+                rename_user_win_hide();
+            })();
+        } else {
+            alert('Эта функция предназначена только для администратора!')
+        }
     }
 
     create_present_list();

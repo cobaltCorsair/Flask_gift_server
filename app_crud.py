@@ -162,13 +162,20 @@ class UpdateTables:
 
     @staticmethod
     def limit_for_user(user_id):
-        # добавляем юзера в таблицу с лимитами
+        """
+        Добавляем юзера в таблицу с лимитами
+        :param user_id: Идентификатор пользователя
+        :return:
+        """
         limits = Limits(user_forum_id=user_id, limit=5)
         db.session.add(limits)
 
     @staticmethod
     def update_limits_everyday():
-        # обновляем лимиты
+        """
+        Обновляем лимиты
+        :return:
+        """
         db.session.query(Limits).update({
             Limits.limit: 5,
         }, synchronize_session=False)
@@ -178,10 +185,32 @@ class UpdateTables:
 
     @staticmethod
     def reduction_limit(user_id):
-        # уменьшаем лимит на единицу
+        """
+        Уменьшаем лимит на единицу
+        :param user_id: Идентификатор пользователя
+        :return:
+        """
         db.session.query(Limits).filter(Limits.user_forum_id == user_id).update({
             Limits.limit: Limits.limit - 1,
         }, synchronize_session=False)
+
+    @staticmethod
+    def rename_user(user_id, new_name):
+        """
+        Переименовываем пользователя
+        :param user_id: идентификатор пользователя
+        :param new_name: новое имя пользователя
+        :return:
+        """
+        user_to_rename = db.session.query(Username).filter(Username.forum_id == user_id)
+        if user_to_rename.first() is not None:
+            user_to_rename.update({
+                Username.forum_name: new_name,
+            }, synchronize_session=False)
+            db.session.commit()
+            return {'answer': 'Имя пользователя обновлено'}
+        else:
+            return {'answer': 'Такого пользователя нет в списке'}
 
 
 class ViewResults:

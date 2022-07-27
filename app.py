@@ -223,6 +223,20 @@ def reset_limits_by_hand():
         return request_result
 
 
+@app.route('/renameuser', methods=["POST"])
+@cross_origin()
+def rename_user():
+    """
+    Переименовываем пользователя в таблице пользователей
+    :return:
+    """
+    if request.method == 'POST':
+        user_id = request.json['forum_id']
+        new_name = request.json['new_name']
+        request_result = UpdateTables.rename_user(user_id, new_name)
+        return request_result
+
+
 def reset_limits():
     """
     Ежесуточный сброс лимитов по таймеру
