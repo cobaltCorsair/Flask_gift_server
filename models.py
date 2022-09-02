@@ -17,6 +17,7 @@ class Username(db.Model):
                                 foreign_keys='UserPresents.id_user_sender')
     user_limits = db.relationship('Limits', backref='Limits_uid', cascade="all,delete",
                                   foreign_keys='Limits.user_forum_id')
+    notifications = db.relationship('Notifications', backref='username_n', foreign_keys='Notifications.user_id')
 
     def __repr__(self):
         return '<User %r>' % self.forum_name
@@ -64,6 +65,9 @@ class UserPresents(db.Model):
     comment = Column(db.String(500))
     date = Column(db.DateTime(), default=datetime.utcnow)
 
+    # отношения
+    time = db.relationship('Notifications', backref='notifications_t', foreign_keys='Notifications.date')
+
     def serialize(self):
         """Метод для сериализации объекта"""
         return {
@@ -82,3 +86,21 @@ class Limits(db.Model):
     id = Column(db.Integer(), primary_key=True)
     user_forum_id = Column(db.Integer(), db.ForeignKey(Username.forum_id))
     limit = Column(db.Integer(), index=True, nullable=False, unique=False)
+
+
+class Notifications(db.Model):
+    """Уведомления"""
+    __tablename__ = 'notifications'
+    id = Column(db.Integer(), primary_key=True)
+    name = Column(db.String(128), index=True)
+    user_forum_id = Column(db.Integer(), db.ForeignKey(Username.forum_id))
+    date = Column(db.DateTime(), db.ForeignKey(UserPresents.date))
+
+    def serialize(self):
+        """Метод для сериализации объекта"""
+        return {
+            "id": self.id,
+            "name": self.name,
+            "user_id": self.user_forum_id,
+            "date": self.date.strftime("%d.%m.%Y %H:%i")
+        }
