@@ -227,9 +227,10 @@ class UpdateTables:
         :return:
         """
         # предварительно удаляем такое же оповещение, если оно есть
-        db.session.query(Notifications).filter(id_user_addressee=addressee, id_user_sender=sender,
-                                               date=date).delete()
-        notification = Notifications(id_user_addressee=addressee, id_user_sender=sender, date=date)
+        db.session.query(Notifications).filter(Notifications.id_addressee == addressee,
+                                               Notifications.id_sender == sender,
+                                               Notifications.date == date).delete()
+        notification = Notifications(id_addressee=addressee, id_sender=sender, date=date)
         db.session.add(notification)
 
 
