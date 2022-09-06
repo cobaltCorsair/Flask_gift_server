@@ -1,5 +1,5 @@
 from datetime import datetime
-from models import Username, Presents, UserPresents, Limits, db
+from models import Username, Presents, UserPresents, Limits, Notifications, db
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import func
 import requests
@@ -73,21 +73,26 @@ class UpdateTables:
     def make_present(addressee, sender, id_present, comment):
         """
         Функция, позволяющая добавлять подарки определенному пользователю
-        :param comment:
-        :param id_present:
+        :param comment: комментарий
+        :param id_present: id подарка
         :param addressee: получатель
         :param sender: отправитель
         :return:
         """
+        date_send = datetime.now()
         get_lim = db.session.query(Limits.limit).filter(Limits.user_forum_id == sender).first()
         if get_lim[0] > 0:
             try:
                 clr_comment = comment.replace("&", "&amp;").replace('"', "&quot;").replace("<", "&lt;").replace(">",
                                                                                                                 "&gt;")
                 present = UserPresents(id_user_addressee=addressee, id_user_sender=sender, id_present=id_present,
-                                       comment=clr_comment, date=datetime.now())
+                                       comment=clr_comment, date=date_send)
                 db.session.add(present)
+                # изменяем лимит
                 UpdateTables.reduction_limit(sender)
+                # добавляем новое уведомление
+                UpdateTables.add_notification(addressee=addressee, sender=sender, date=date_send)
+                # сохраняем изменения
                 db.session.commit()
                 return {'answer': 'Подарок успешно отправлен'}
             except IntegrityError:
@@ -212,6 +217,21 @@ class UpdateTables:
         else:
             return {'answer': 'Такого пользователя нет в списке'}
 
+    @staticmethod
+    def add_notification(addressee, sender, date):
+        """
+        Добавляем уведомления об отправке подака пользоателю
+        :param addressee: получатель
+        :param sender: отправитель
+        :param date: дата
+        :return:
+        """
+        # предварительно удаляем такое же оповещение, если оно есть
+        db.session.query(Notifications).filter(id_user_addressee=addressee, id_user_sender=sender,
+                                               date=date).delete()
+        notification = Notifications(id_user_addressee=addressee, id_user_sender=sender, date=date)
+        db.session.add(notification)
+
 
 class ViewResults:
     @staticmethod
@@ -279,7 +299,7 @@ class ViewResults:
         Получаем количество подарков пользователя
         :return:
         """
-        presents_count = db.session.query(UserPresents.id_user_addressee, func.count(UserPresents.id)).\
+        presents_count = db.session.query(UserPresents.id_user_addressee, func.count(UserPresents.id)). \
             group_by(UserPresents.id_user_addressee).all()
         presents_count = {i[0]: i[1] for i in presents_count}
         if presents_count is not None:
